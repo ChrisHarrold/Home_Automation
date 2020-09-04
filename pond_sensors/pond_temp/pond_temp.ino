@@ -124,7 +124,6 @@ void loop(void)
     Serial.print(" : ");
     tempC = sensors.getTempCByIndex(i);
     Serial.print(tempC);
-    snprintf(str, sizeof(str), "%.2f", f);
     Serial.print((char)176);//shows degrees character
     Serial.print("C  |  ");
     tempF=(DallasTemperature::toFahrenheit(tempC));
