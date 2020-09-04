@@ -138,13 +138,7 @@ void loop(void)
     while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
-
-  }
-  
-
-
-
-
+  Serial.println("And Now We Wait");
   Serial.println("");
   delay(10000);
 }
