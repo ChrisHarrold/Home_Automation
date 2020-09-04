@@ -108,6 +108,11 @@ void setup(void)
 
 void loop(void)
 { 
+  //reconnect mqtt at loop start  
+    if (!client.connected()) {
+      reconnectMQ();
+  }
+
   // Send command to all the sensors for temperature conversion
   sensors.requestTemperatures(); 
   
@@ -119,24 +124,26 @@ void loop(void)
     Serial.print(" : ");
     tempC = sensors.getTempCByIndex(i);
     Serial.print(tempC);
+    snprintf(str, sizeof(str), "%.2f", f);
     Serial.print((char)176);//shows degrees character
     Serial.print("C  |  ");
     tempF=(DallasTemperature::toFahrenheit(tempC));
     Serial.print(tempF);
     Serial.print((char)176);//shows degrees character
     Serial.println("F");
-  }
-  
-  if (!client.connected()) {
-    reconnectMQ();
-  }
 
-  Serial.println("Constructing the payload:");
-  placeholder_value=sprintf(data0, "{\"Message\":\"\", \"Sensors\": {\"C_Temp\":\"%s\", \"F_temp\":\"%s\"}}", tempC, tempF);
-  Serial.println("Publishing message");
-  while (!client.publish("Pond", data0)) {
+    Serial.println("Constructing the payload:");
+    placeholder_value=sprintf(data0, "{\"Message\":\"\", \"Sensors\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", tempC, tempF);
+    Serial.println("Publishing message");
+    while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
+
+  }
+  
+
+
+
 
   Serial.println("");
   delay(10000);
