@@ -1,7 +1,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <time.h>
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
 // Data wire is plugged into digital pin 2 on the Arduino
@@ -22,9 +22,9 @@ int placeholder_value;
 
 
 // declare our Wifi and MQTT connections and other constant settings for the network
-const char* ssid     = "International_House_of_Corgi_24";            // The SSID (name) of the Wi-Fi network you want to connect to
-const char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
-const char* mqtt_server = "192.168.2.41";                             // The target mqtt server
+char* ssid     = "International_House_of_Corgi_24";            // The SSID (name) of the Wi-Fi network you want to connect to
+char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
+char* mqtt_server = "192.168.2.41";                             // The target mqtt server
 String clientId = "PT_1";
 int lcount = 0;
 
@@ -32,16 +32,11 @@ int lcount = 0;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// setup the MCP3008 using default pins
-Adafruit_MCP3008 adc;
-
-//
 // Reconnects to the MQTT message-bus if the connection died, or we're
 // not otherwise connected.
 //
-void reconnectMQ() {
 
-  digitalWrite(net, LOW);  // turn the Blue NET LED Off
+void reconnectMQ() {
 
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Wifi not connected - configuring");
@@ -65,12 +60,11 @@ void reconnectMQ() {
   }
 
   // Once connected, publish an announcement...
-  String payload = "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}";
-  payload.toCharArray(data1, (payload.length() + 1));
-  client.publish("control", data1); //the "control" topic is just for notifications - change to fit your needs
-
-  digitalWrite(net, HIGH);  // turn the Blue NET LED on
-  delay(5000);
+//  String payload = "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}";
+//  payload.toCharArray(data1, (payload.length() + 1));
+//  Serial.println("attempting to publish message");
+  client.publish("control", "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}"); //the "control" topic is just for notifications - change to fit your needs
+//  Serial.println("I actually got past that part");
 }
 
 void setup_wifi() {
@@ -136,10 +130,11 @@ void loop(void)
   if (!client.connected()) {
     reconnectMQ();
   }
-  
+
+  Serial.println("Constructing the payload:");
   placeholder_value=sprintf(data0, "{\"Message\":\"\", \"Sensors\": {\"C_Temp\":\"%s\", \"F_temp\":\"%s\"}}", tempC, tempF);
   Serial.println("Publishing message");
-  while (!client.publish("PT_1", data0)) {
+  while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
 
