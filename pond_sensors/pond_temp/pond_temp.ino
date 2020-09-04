@@ -1,6 +1,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <time.h>
+#include <string>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
@@ -13,7 +14,7 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
 
-int deviceCount = 0;
+int sensor_count = 0;
 float tempC;
 float tempF;
 char data1[50];
@@ -100,8 +101,8 @@ void setup(void)
   // locate devices on the bus
   Serial.print("Locating devices...");
   Serial.print("Found ");
-  deviceCount = sensors.getDeviceCount();
-  Serial.print(deviceCount, DEC);
+  sensor_count = sensors.getDeviceCount();
+  Serial.print(sensor_count, DEC);
   Serial.println(" devices.");
   Serial.println("");
 }
@@ -117,12 +118,12 @@ void loop(void)
   sensors.requestTemperatures(); 
   
   // Display temperature from each sensor
-  for (int i = 0;  i < deviceCount;  i++)
+  for (int devs = 0;  devs < sensor_count;  devs++)
   {
     Serial.print("Sensor ");
-    Serial.print(i+1);
+    Serial.print(devs+1);
     Serial.print(" : ");
-    tempC = sensors.getTempCByIndex(i);
+    tempC = sensors.getTempCByIndex(devs);
     Serial.print(tempC);
     Serial.print((char)176);//shows degrees character
     Serial.print("C  |  ");
@@ -130,14 +131,22 @@ void loop(void)
     Serial.print(tempF);
     Serial.print((char)176);//shows degrees character
     Serial.println("F");
+    
+    if (devs < sensor_count) {
+      //Serial.println("Constructing the payload:");
+      placeholder_value=sprintf(data0, "{\"Sensor\":\"%d\", \"Values\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", devs, tempC, tempF);
+      //Serial.println("Publishing message");
+      while (!client.publish("Pond", data0)) {
+      Serial.print(".");
+      }
+      sensor_count = sensors.getDeviceCount();
+    }
 
-    Serial.println("Constructing the payload:");
-    placeholder_value=sprintf(data0, "{\"Message\":\"\", \"Sensors\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", tempC, tempF);
-    Serial.println("Publishing message");
-    while (!client.publish("Pond", data0)) {
-    Serial.print(".");
   }
-  Serial.println("And Now We Wait");
-  Serial.println("");
+  //Serial.println("And Now We Wait");
+  //Serial.println("");
+  client.publish("control", "{\"Unit\":\"PT_1\", \"Power\":\"Preparing to deep sleep\"}"); //the "control" topic is just for notifications - change to fit your needs
   delay(10000);
+  ESP.deepSleep(30e6);  
+  //delay(30000);
 }
