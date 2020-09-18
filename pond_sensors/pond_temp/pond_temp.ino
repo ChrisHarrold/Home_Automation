@@ -115,7 +115,7 @@ void setup(void)
   Serial.println("Checking sleep status");
   if (rtcMem.count != 0) {
     Serial.println("Going back to sleep for an hour - will try again");
-    ESP.deepSleep(3,6e+9);
+    ESP.deepSleep(3.6e+9);
   }
   
   // If the RTC mem check passes, the program will sample the temps
@@ -183,7 +183,7 @@ void loop(void)
   
   // now we restart the sleep cycle after taking all samples
   // nothing runs after this
-  ESP.deepSleep(3,6e+9);
+  ESP.deepSleep(3.6e+9);
 }
 
 void readFromRTCMemory() {
@@ -198,6 +198,9 @@ void writeToRTCMemory() {
   if (rtcMem.count == MAXHOUR) {
     rtcMem.count = 0;
   } else {
+    if (rtcMem.count < 0) {
+      rtcMem.count = 0;
+    }
     rtcMem.count++;
   }
 
@@ -207,5 +210,3 @@ void writeToRTCMemory() {
   Serial.println(rtcMem.count);
   yield();
 }
-
-
