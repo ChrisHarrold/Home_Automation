@@ -35,7 +35,7 @@ DHT dht(DHTPIN, DHTTYPE);
 DallasTemperature sensors(&oneWire);
 
 // other variables
-int override_pin = D3;
+int override_pin = D5;
 int sensor_count = 0;
 float tempC;
 float tempF;
@@ -66,12 +66,14 @@ void setup(void)
   // serial outputs, post testing to save a couple more mA as well
 
   // CHeck the overide pin to see if we are in programming/debug or runtime mode (DIP 2 connected to D3)
-  pinMode(override_pin, INPUT);;
+  
+  pinMode(override_pin, INPUT_PULLUP);
   if (digitalRead(override_pin) == HIGH) {
     debug_mode = true;
+    Serial.println("Changed Mode");
   }
   
-  if (debug_mode = false) {
+  if (debug_mode == false) {
     Serial.println("Reading RTC Value");
     readFromRTCMemory();
     Serial.println("Updating RTC Value");
@@ -120,11 +122,14 @@ void loop(void)
   
   // now we restart the sleep cycle after taking all samples
   // nothing runs after this
-  if (debug_mode = false) {
+  if (debug_mode == false) {
+    Serial.println("Going into deep sleep");
     ESP.deepSleep(3.6e+9);
+    //ESP.deepSleep(30000);
   } else {
+    Serial.println("Just resting for 30 seconds");
     delay(30000);
-    ESP.restart;
+    ESP.restart();
   }
   
 }
