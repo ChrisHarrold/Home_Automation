@@ -261,6 +261,9 @@ void writeToRTCMemory() {
     if (rtcMem.count < 1) {
       rtcMem.count = 1;
     }
+    if (rtcMem.count > 4) {
+      rtcMem.count = 1;
+    }
     rtcMem.count++;
   }
 
