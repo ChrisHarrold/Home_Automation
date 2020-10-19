@@ -24,6 +24,11 @@ rtcStore rtcMem;
 #define DHTPIN D2
 #define DHTTYPE DHT11
 
+// configure analog read for battery level
+const int batt_pin = A0;
+int battery_raw = 0;
+int battery_clean = 0;
+
 
 // Setup a oneWire instance to communicate with any OneWire device
 OneWire oneWire(ONE_WIRE_BUS);
@@ -272,4 +277,16 @@ void writeToRTCMemory() {
   Serial.print("Current loop count = ");
   Serial.println(rtcMem.count);
   yield();
+}
+
+void getBatteryLevel() {
+  battery_raw = analogRead(batt_pin);
+  battery_clean = map(battery_raw, 0, 1023, 0, 100);
+  //Serial.println("Constructing the payload:");
+  placeholder_value=sprintf(data0, "{\"Battery\":\"%i\"}", battery_clean);
+  //Serial.println("Publishing message");
+  while (!client.publish("Pond", data0)) {
+    Serial.print(".");
+  }
+
 }
