@@ -118,6 +118,7 @@ void loop(void)
 
   one_wire_read();
   dht_read();
+  getBatteryLevel();
 
 
   //Serial.println("And Now We Wait");
@@ -281,10 +282,11 @@ void writeToRTCMemory() {
 
 void getBatteryLevel() {
   battery_raw = analogRead(batt_pin);
-  battery_clean = map(battery_raw, 0, 1023, 0, 100);
-  //Serial.println("Constructing the payload:");
+  Serial.print("battery raw reading:  ");
+  Serial.println (battery_raw);
+  battery_clean = map(battery_raw, 0, 1024, 0, 100);
+  Serial.println(battery_clean);
   placeholder_value=sprintf(data0, "{\"Battery\":\"%i\"}", battery_clean);
-  //Serial.println("Publishing message");
   while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
