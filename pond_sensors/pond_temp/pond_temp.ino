@@ -54,7 +54,7 @@ bool debug_mode = false;
 char* ssid     = "International_House_of_Corgi_24";            // The SSID (name) of the Wi-Fi network you want to connect to
 char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
 char* mqtt_server = "192.168.2.41";                             // The target mqtt server
-String clientId = "PT_1";
+String clientId = "Pond_Temp";
 int lcount = 0;
 
 // declare our Wifi and MQTT connections
@@ -123,7 +123,7 @@ void loop(void)
 
   //Serial.println("And Now We Wait");
   //Serial.println("");
-  client.publish("control", "{\"Unit\":\"PT_1\", \"Power\":\"Preparing to deep sleep\"}"); //the "control" topic is just for notifications - change to fit your needs
+  client.publish("control", "{\"Unit\":\"Pond_Temp\", \"Power\":\"Preparing to deep sleep\"}"); //the "control" topic is just for notifications - change to fit your needs
   delay(10000);
   
   // now we restart the sleep cycle after taking all samples
@@ -167,7 +167,7 @@ void dht_read() {
       Serial.println(" *C ");
   }
   //Serial.println("Constructing the DHT11 payload:");
-  placeholder_value=sprintf(data0, "{\"Sensor\":\"DHT-11\", \"Values\": {\"C_Temp\":\"%.2f\", \"Humidity\":\"%.2f\"}}", temperature, humidity);
+  placeholder_value=sprintf(data0, "{\"Unit\":\"Pond_Temp\",\"Sensor\":\"DHT-11\", \"Values\": {\"C_Temp\":\"%.2f\", \"Humidity\":\"%.2f\"}}", temperature, humidity);
   //Serial.println("Publishing the DHT11 message");
   while (!client.publish("Pond", data0)) {
     Serial.print(".");
@@ -196,7 +196,7 @@ void one_wire_read() {
     
     if (devs < sensor_count) {
       //Serial.println("Constructing the payload:");
-      placeholder_value=sprintf(data0, "{\"Sensor\":\"%d\", \"Values\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", devs, tempC, tempF);
+      placeholder_value=sprintf(data0, "{\"Unit\":\"Pond_Temp\",\"Sensor\":\"%d\", \"Values\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", devs, tempC, tempF);
       //Serial.println("Publishing message");
       while (!client.publish("Pond", data0)) {
         Serial.print(".");
@@ -237,7 +237,7 @@ void reconnectMQ() {
 //  String payload = "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}";
 //  payload.toCharArray(data1, (payload.length() + 1));
 //  Serial.println("attempting to publish message");
-  client.publish("control", "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}"); //the "control" topic is just for notifications - change to fit your needs
+  client.publish("control", "{\"Unit\":\"Pond_Temp\", \"MQTT\":\"Connected\"}"); //the "control" topic is just for notifications - change to fit your needs
 //  Serial.println("I actually got past that part");
 }
 
@@ -286,7 +286,7 @@ void getBatteryLevel() {
   Serial.println (battery_raw);
   battery_clean = map(battery_raw, 0, 1024, 0, 100);
   Serial.println(battery_clean);
-  placeholder_value=sprintf(data0, "{\"Battery\":\"%i\"}", battery_clean);
+  placeholder_value=sprintf(data0, "{\"Unit\":\"Pond_Temp\",\"Battery\":\"%i\"}", battery_clean);
   while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
