@@ -162,9 +162,9 @@ void one_wire_read() {
     Serial.println("F");
     
     if (devs < sensor_count) {
-      Serial.println("Constructing the payload:");
+      //Serial.println("Constructing the payload:");
       placeholder_value=sprintf(data0, "{\"Unit\":\"Filters\",\"Sensor\":\"%d\", \"Values\": {\"C_Temp\":\"%.2f\", \"F_temp\":\"%.2f\"}}", devs, tempC, tempF);
-      Serial.println("Publishing message");
+      //Serial.println("Publishing message");
       while (!client.publish("Pond", data0)) {
         Serial.print(".");
       }
