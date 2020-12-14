@@ -204,7 +204,7 @@ void reconnectMQ() {
 //  String payload = "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}";
 //  payload.toCharArray(data1, (payload.length() + 1));
 //  Serial.println("attempting to publish message");
-  client.publish("control", "{\"Unit\":\"PT_1\", \"MQTT\":\"Connected\"}"); //the "control" topic is just for notifications - change to fit your needs
+  client.publish("control", "{\"Unit\":\"Filters\", \"MQTT\":\"Connected\"}"); //the "control" topic is just for notifications - change to fit your needs
 //  Serial.println("I actually got past that part");
 }
 
@@ -253,7 +253,7 @@ void getBatteryLevel() {
   Serial.println (battery_raw);
   battery_clean = map(battery_raw, 0, 1024, 0, 100);
   Serial.println(battery_clean);
-  placeholder_value=sprintf(data0, "{\"Battery\":\"%i\"}", battery_clean);
+  placeholder_value=sprintf(data0, "{\"Unit\":\"Filters\", \"Battery\":\"%i\"}", battery_clean);
   while (!client.publish("Pond", data0)) {
     Serial.print(".");
   }
@@ -268,10 +268,12 @@ void check_filter_leve() {
     digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH);  // measure the echo time (μs)
     distance = (duration/2.0)*0.0343;   // convert echo time to distance (cm)
-    if(distance>400 || distance<2) Serial.println("Out of range");
-    else
-    {
-        Serial.print("Distance: ");
-        Serial.print(distance, 1); Serial.println(" cm");
+    Serial.print(distance);
+    Serial.println(" CM");
+    //Serial.println("Constructing the payload:");
+    placeholder_value=sprintf(data0, "{\"Unit\":\"Filters\", \"Filter_Level\":\"%.2f\"}", distance);
+    //Serial.println("Publishing message");
+    while (!client.publish("Pond", data0)) {
+      Serial.print(".");
     }
 }

@@ -22,7 +22,7 @@ rtcStore rtcMem;
 
 // DHT 11 Settings
 #define DHTPIN D2
-#define DHTTYPE DHT11
+#define DHTTYPE DHT22
 
 // configure analog read for battery level
 const int batt_pin = A0;
@@ -33,7 +33,7 @@ int battery_clean = 0;
 // Setup a oneWire instance to communicate with any OneWire device
 OneWire oneWire(ONE_WIRE_BUS);
 
-//Setup DHT 11
+//Setup DHT 22
 DHT dht(DHTPIN, DHTTYPE);
 
 // Pass oneWire reference to DallasTemperature library
@@ -44,8 +44,8 @@ int override_pin = D5;
 int sensor_count = 0;
 float tempC;
 float tempF;
-char data1[50];
-char data0[50];
+char data1[100];
+char data0[100];
 int placeholder_value;
 bool debug_mode = false;
 
@@ -149,7 +149,7 @@ void readFromRTCMemory() {
 }
 
 void dht_read() {
-  //DHT11 read and collect variables - float is a numeric type with better precision than int
+  //DHT22 read and collect variables - float is a numeric type with better precision than int
   float humidity = dht.readHumidity();
   // Read temperature as Celsius (the default - can be change to Farenheit if desired)
   float temperature = dht.readTemperature();
@@ -161,7 +161,7 @@ void dht_read() {
       humidity = 0;
   //actually got a clean reading so go down the happy path and format the reading for the MQTT message    
   } else {
-      Serial.println(" DHT11 Readings: ");
+      Serial.println(" DHT22 Readings: ");
       Serial.print("Humidity: "); Serial.print(humidity); Serial.print(" %\t"); 
       Serial.print("Temperature: "); Serial.print(temperature); 
       Serial.println(" *C ");
