@@ -51,7 +51,7 @@ bool debug_mode = false;
 
 
 // declare our Wifi and MQTT connections and other constant settings for the network
-char* ssid     = "International_House_of_Corgi_24";            // The SSID (name) of the Wi-Fi network you want to connect to
+char* ssid     = "International_House_of_Corgi";            // The SSID (name) of the Wi-Fi network you want to connect to
 char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
 char* mqtt_server = "192.168.2.41";                             // The target mqtt server
 String clientId = "Pond_Temp";
@@ -70,7 +70,7 @@ void setup(void)
   // and adding battery drain when it isn't time to sample. I will remove the 
   // serial outputs, post testing to save a couple more mA as well
 
-  // CHeck the overide pin to see if we are in programming/debug or runtime mode (DIP 2 connected to D3)
+  // Check the overide pin to see if we are in programming/debug or runtime mode (DIP 2 connected to D3)
   
   pinMode(override_pin, INPUT_PULLUP);
   if (digitalRead(override_pin) == HIGH) {
