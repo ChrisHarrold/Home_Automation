@@ -24,6 +24,7 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
                   cols=cols, rows=rows)
 
 lcd.clear()
+lcd.home()
 lcd.write_string('Flow on 1 here:')
 lcd.crlf()
 lcd.write_string('Flow on two here:')
@@ -36,8 +37,13 @@ while i > 0:
     lcd.home()
     lcd.cursor_pos = (3,0)
     lcd.write_string('Next Update: {}'.format(i))
+    i = i - 1
     sleep(1)
+else
+    lcd.home()
+    lcd.cursor_pos = (3,0)
+    lcd.write_string('Test concludes')
+    sleep(20)
+    lcd.clear()
+    lcd.close()
 
-
-lcd.clear()
-lcd.close()
