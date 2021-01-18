@@ -8,7 +8,8 @@ FLOW_SENSOR1 = 18
 FLOW_SENSOR2 = 23
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(FLOW_SENSOR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 global count1
 global count2
 count1 = 0
