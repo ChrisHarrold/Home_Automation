@@ -11,6 +11,8 @@ rows = 4
 charmap = 'A00'
 i2c_expander = 'PCF8574'
 i=1
+current_flow_1 = 200
+current_flow_2 = 185
 
 # Generally 27 is the address;Find yours using: i2cdetect -y 1 
 address = 0x27 
@@ -22,19 +24,17 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
 
 def write_to_lcd_display():
     # Write a string on first line and move to next line
-    lcd.write_string('Testing LCD')
+    lcd.write_string('Tank 1 flow is '+ current_flow_1 + ' LPM')
     lcd.crlf()
-    lcd.write_string('This is Line 2')
     lcd.crlf()
-    lcd.write_string('This is line 3')
+    lcd.write_string('Tank 12flow is '+ current_flow_2 + ' LPM')
     lcd.crlf()
-    lcd.write_string('This is line 4')
+    lcd.write_string('Last updated: ' + now())
 
 while i < 100:
-    sleep(20)
     # Clear the LCD screen
     lcd.clear()
-    sleep(20)
+    sleep(5)
     write_to_lcd_display()
 
 lcd.clear()
