@@ -34,8 +34,8 @@ while i > 0:
     # Clear the LCD screen
     #lcd.clear()
     lcd.home()
-    lcd.cursor_pos = (4, 10)
-    lcd.write_string('{}'.format(i))
+    lcd.cursor_pos = (4, )
+    lcd.write_string('Next Update: {}'.format(i))
     sleep(1)
 
 
