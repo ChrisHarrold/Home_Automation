@@ -2,7 +2,7 @@
 from RPLCD import i2c
 
 # Import sleep library
-from time import sleep
+import time
 
 # constants to initialise the LCD
 lcdmode = 'i2c'
