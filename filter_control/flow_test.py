@@ -52,6 +52,7 @@ while True:
 
             lastcount1 = count1
             lastcount2 = count2
+            interval = 1
 
             
 	
