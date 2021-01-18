@@ -28,7 +28,7 @@ lcd.write_string('Flow on 1 here:')
 lcd.crlf()
 lcd.write_string('Flow on two here:')
 lcd.crlf()
-lcd.write_string('Next line is the test')
+lcd.write_string('Next line test')
 
 while i > 0:
     # Clear the LCD screen
