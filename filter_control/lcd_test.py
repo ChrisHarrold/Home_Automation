@@ -31,7 +31,8 @@ def write_to_lcd_display():
     lcd.write_string('Tank 12flow is '+ str(current_flow_2) + ' LPM')
     lcd.crlf()
     now = datetime.datetime.now()
-    lcd.write_string('Last updated: ' + now.strftime("%Y-%m-%d %H:%M:%S"))
+    lcd.write_string('Last updated: ' + now.strftime("%H:%M:%S"))
+    sleep(10)
 
 while i < 100:
     # Clear the LCD screen
