@@ -18,7 +18,7 @@ current_count1 = 0
 count2 = 0
 lastcount2 = 0
 current_count2 = 0
-interval = 1
+interval = 60
 flow1 = 0
 flow2 = 0
 
@@ -36,10 +36,10 @@ GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
 
 while True:
     try:
-        while interval < 6:
-            print('Current loop is number {0}. No reading will be taken\n'.format(interval))
-            time.sleep(10)
-            interval = interval+1
+        while interval > 0:
+            print('Counting down to current reading: {} \n'.format(interval))
+            time.sleep(1)
+            interval = interval-1
         else:
             current_count1 = count1 - lastcount1
             current_count2 = count2 - lastcount2
@@ -52,7 +52,7 @@ while True:
 
             lastcount1 = count1
             lastcount2 = count2
-            interval = 1
+            interval = 60
 
             
 	
