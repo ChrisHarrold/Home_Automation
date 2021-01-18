@@ -39,7 +39,7 @@ while i > 0:
     lcd.write_string('Next Update: {}'.format(i))
     i = i - 1
     sleep(1)
-else
+else:
     lcd.home()
     lcd.cursor_pos = (3,0)
     lcd.write_string('Test concludes')
