@@ -25,13 +25,13 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap,
 
 def write_to_lcd_display():
     # Write a string on first line and move to next line
-    lcd.write_string('Tank 1 flow is '+ str(current_flow_1) + ' LPM')
+    lcd.write_string('Tank 1: '+ str(current_flow_1) + ' LPM')
     lcd.crlf()
     lcd.crlf()
-    lcd.write_string('Tank 12flow is '+ str(current_flow_2) + ' LPM')
+    lcd.write_string('Tank 2: '+ str(current_flow_2) + ' LPM')
     lcd.crlf()
     now = datetime.datetime.now()
-    lcd.write_string('Last updated: ' + now.strftime("%H:%M:%S"))
+    lcd.write_string('Update: ' + now.strftime("%H:%M:%S"))
     sleep(10)
 
 while i < 100:
