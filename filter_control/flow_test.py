@@ -15,7 +15,7 @@ count = 0
 def countPulse(channel):
    global count
    count = count+1
-   print "The current pulse count is {0}.".format (count)
+   print 'The current pulse count is {0} '.format (count)
    print '\n'
 
 GPIO.add_event_detect(FLOW_SENSOR, GPIO.BOTH, callback=countPulse)
