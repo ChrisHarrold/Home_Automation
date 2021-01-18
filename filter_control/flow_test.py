@@ -15,8 +15,8 @@ count = 0
 def countPulse(channel):
    global count
    count = count+1
-   print 'The current pulse count is {0} '.format (count)
-   print '\n'
+   print('The current pulse count is {0} '.format (count))
+   print('\n')
 
 GPIO.add_event_detect(FLOW_SENSOR, GPIO.BOTH, callback=countPulse)
 
@@ -29,6 +29,6 @@ while True:
         time.sleep(10)
 	
     except KeyboardInterrupt:
-        print '\ncaught keyboard interrupt!, bye'
+        print('\ncaught keyboard interrupt!, bye')
         GPIO.cleanup()
         sys.exit()
