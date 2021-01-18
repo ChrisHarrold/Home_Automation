@@ -2,7 +2,8 @@
 from RPLCD import i2c
 
 # Import sleep library
-from time import sleep, now 
+from time import sleep
+import datetime
 
 # constants to initialise the LCD
 lcdmode = 'i2c'
@@ -29,7 +30,8 @@ def write_to_lcd_display():
     lcd.crlf()
     lcd.write_string('Tank 12flow is '+ str(current_flow_2) + ' LPM')
     lcd.crlf()
-    lcd.write_string('Last updated: ' + str(now()))
+    now = datetime.datetime.now()
+    lcd.write_string('Last updated: ' + now.strftime("%Y-%m-%d %H:%M:%S"))
 
 while i < 100:
     # Clear the LCD screen
