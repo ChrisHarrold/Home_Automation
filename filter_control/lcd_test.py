@@ -35,7 +35,7 @@ while i > 0:
     # Clear the LCD screen
     #lcd.clear()
     lcd.home()
-    lcd.cursor_pos = (3,18)
+    lcd.cursor_pos = (3,17)
     lcd.write_string('{} '.format(i))
     i = i - 1
     sleep(1)
