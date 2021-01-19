@@ -104,11 +104,12 @@ while True:
             interval = 60
 
     except KeyboardInterrupt:
+        print('Keyboard Interrupt Detected - Breaking program. program sleeps for 20 seconds to notify via LCD.')
         lcd.clear()
         lcd.home()
         lcd.write_string('Keyboard interrupt')
         lcd.cursor_pos = (2,0)
-        lcd.write_string('20 seconds to Shutdown')
+        lcd.write_string('Program terminated')
         sleep(20)
         lcd.clear()
         lcd.close()
