@@ -85,7 +85,7 @@ while True:
             
             # Get current out-flow water temperatures:
             os.system('modprobe w1-gpio')
-		    os.system('modprobe w1-therm')
+            os.system('modprobe w1-therm')
             Temp_sensor_count = temp_sensor.device_count()
             i = 0
             while i < Temp_sensor_count:
