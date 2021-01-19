@@ -91,6 +91,10 @@ while True:
             lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
             
             # Get current out-flow water temperatures:
+            # the "library" that is included DOES perform theese two steps BUT
+            # only the FIRST TIME the sensor is initialized. In order to update the sensor
+            # you need to run these two command again. I feel the way RPi does 1-Wire
+            # is a major deficiency really. Having to shell to the OS is not ideal.
             os.system('modprobe w1-gpio')
             os.system('modprobe w1-therm')
             Temp_sensor_count = temp_sensor.device_count()
