@@ -36,7 +36,7 @@ while i > 0:
     #lcd.clear()
     lcd.home()
     lcd.cursor_pos = (3,18)
-    lcd.write_string('{}'.format(i))
+    lcd.write_string('{} '.format(i))
     i = i - 1
     sleep(1)
 else:
