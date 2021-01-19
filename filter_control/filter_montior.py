@@ -78,9 +78,9 @@ while True:
             flow1 = (current_count1/.55)
             flow2 = (current_count2/.55)
             lcd.cursor_pos = (0,0)
-            lcd.write_string('Flow 1 {0} LPM'.format (flow1))
+            lcd.write_string('Flow 1 {0:.2f} LPM'.format (flow1))
             lcd.cursor_pos = (1,0)
-            lcd.write_string('Flow 2 {0} LPM'.format (flow2))
+            lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
             
             # Get current out-flow water temperatures:
             Temp_sensor_count = temp_sensor.device_count()
@@ -91,7 +91,7 @@ while True:
                 the_tempF.append((temp_temp_temp * 1.8) + 32)
                 i += 1
             lcd.cursor_pos = (2,0)
-            lcd.write_string('Temp C: {0:2f}/{1:2f} '.format (the_tempC[0], the_tempC[1]))
+            lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
 
             # Reset counters for next loop
             lcd.cursor_pos = (3,0)
