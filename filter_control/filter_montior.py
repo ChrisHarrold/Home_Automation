@@ -57,6 +57,9 @@ GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
 # Initialize temp sensor
 # this uses 1-wir and is connected to GPIO4 (although i do not think this matters?)
 temp_sensor = DS18B20()
+the_tempC = []
+the_tempF = []
+temp_temp_temp = 0
 
 # Here is the actual program:
 while True:
@@ -74,21 +77,25 @@ while True:
             current_count2 = count2 - lastcount2
             flow1 = (current_count1/.55)
             flow2 = (current_count2/.55)
-            lcd.write_string('Flow 1: {0} LPM'.format (flow1))
-            lcd.crlf()
-            lcd.write_string('Flow 2: {0} LPM'.format (flow2))
-            lcd.crlf()
+            lcd.cursor_pos = (0,0)
+            lcd.write_string('Flow 1 {0} LPM'.format (flow1))
+            lcd.cursor_pos = (1,0)
+            lcd.write_string('Flow 2 {0} LPM'.format (flow2))
             
-
             # Get current out-flow water temperatures:
             Temp_sensor_count = temp_sensor.device_count()
             i = 0
             while i < Temp_sensor_count:
-                print(temp_sensor.tempC(i))
+                temp_temp_temp = (temp_sensor.tempC(i))
+                the_tempC[i] = temp_temp_temp
+                the_tempF[i] = (temp_temp_temp * 1.8) + 32
                 i += 1
-
+            lcd.cursor_pos = (2.0)
+            lcd.write_string('Temp C: {0.2f}/{1.2f} '.format (the_tempC[0], the_tempC[1]))
 
             # Reset counters for next loop
+            lcd.cursor_pos = (3.0)
+            lcd.write_string('Next Update:')
             lastcount1 = count1
             lastcount2 = count2
             interval = 60
