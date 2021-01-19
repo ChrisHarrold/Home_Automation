@@ -12,8 +12,6 @@ rows = 4
 charmap = 'A00'
 i2c_expander = 'PCF8574'
 i=60
-current_flow_1 = 200
-current_flow_2 = 185
 
 # Generally 27 is the address;Find yours using: i2cdetect -y 1 
 address = 0x27 
@@ -27,16 +25,18 @@ lcd.clear()
 lcd.home()
 lcd.write_string('Flow on 1 here:')
 lcd.crlf()
-lcd.write_string('Flow on two here:')
+lcd.write_string('Flow on 2 here:')
 lcd.crlf()
-lcd.write_string('Next line test')
+lcd.write_string('----------------')
+lcd.crlf()
+lcd.write_string('Countdown:')
 
 while i > 0:
     # Clear the LCD screen
     #lcd.clear()
     lcd.home()
-    lcd.cursor_pos = (3,0)
-    lcd.write_string('Next Update: {}'.format(i))
+    lcd.cursor_pos = (3,18)
+    lcd.write_string('{}'.format(i))
     i = i - 1
     sleep(1)
 else:
