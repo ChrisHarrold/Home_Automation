@@ -10,6 +10,8 @@ import paho.mqtt.client as mqtt #import the mqtt client from the paho library
 first_run = True
 debug = False
 terminate = False
+reporting_loop_count = 60
+current_loop_count = 0
 
 # values to initialise the LCD
 # -------------------------------------------------------------------
@@ -89,6 +91,7 @@ while True:
             interval = interval - 1
             sleep(1)
         else:
+            current_loop_count = current_loop_count + 1
             lcd.clear()
             lcd.home()
             # Get current LPM from flow meters:
@@ -118,16 +121,18 @@ while True:
             lcd.cursor_pos = (2,0)
             lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
 
-            # Send data to home hub for storage and display in central hub
-            client.connect(broker_address) #connect to broker
-            client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
-            data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
-            data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
-            client.publish("Pond", data0)
-            client.publish("Pond", data1)
-            sleep(1)
-            client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
-            client.disconnect()
+            if current_loop_count == reporting_loop_count :
+                # Send data to home hub for storage and display in central hub
+                client.connect(broker_address) #connect to broker
+                client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
+                data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
+                data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+                client.publish("Pond", data0)
+                client.publish("Pond", data1)
+                sleep(1)
+                client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
+                client.disconnect()
+                current_loop_count = 0
 
             # Reset counters for next loop
             lcd.cursor_pos = (3,0)
