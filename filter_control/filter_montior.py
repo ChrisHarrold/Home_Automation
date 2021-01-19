@@ -120,11 +120,13 @@ while True:
 
             # Send data to home hub for storage and display in central hub
             client.connect(broker_address) #connect to broker
+            client.publish("control", '{{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}}')
             data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
             data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
             client.publish("Pond", data0)
             client.publish("Pond", data1)
             sleep(1)
+            client.publish("control", '{{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}}')
             client.disconnect()
 
             # Reset counters for next loop
