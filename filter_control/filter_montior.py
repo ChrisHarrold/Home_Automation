@@ -69,6 +69,7 @@ while True:
     try:
         if first_run:
             interval = 0
+            first_run = False
 
         while interval > 0:
             lcd.home()
