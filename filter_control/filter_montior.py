@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import sys, datetime
+import sys, datetime, os
 from time import sleep
 from RPLCD import i2c
 from ds18b20 import DS18B20 #Temmp sensor library import
@@ -84,6 +84,8 @@ while True:
             lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
             
             # Get current out-flow water temperatures:
+            os.system('modprobe w1-gpio')
+		    os.system('modprobe w1-therm')
             Temp_sensor_count = temp_sensor.device_count()
             i = 0
             while i < Temp_sensor_count:
