@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
-import time, sys, datetime
+import sys, datetime
+from time import sleep
 from RPLCD import i2c
 from ds18b20 import DS18B20 #Temmp sensor library import
 
