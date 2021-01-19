@@ -3,9 +3,13 @@ import sys, datetime, os
 from time import sleep
 from RPLCD import i2c
 from ds18b20 import DS18B20 #Temmp sensor library import
+import paho.mqtt.client as mqtt #import the mqtt client from the paho library
 
+# tag up for the first run (gets changed once into the loop)
+# also add values for eventual debug mode and terminate control (will be toggle sitches)
 first_run = True
-
+debug = False
+terminate = False
 
 # values to initialise the LCD
 # -------------------------------------------------------------------
@@ -64,6 +68,13 @@ the_tempC = []
 the_tempF = []
 temp_temp_temp = 0
 
+# initialize MQTT for sending to the home hub
+broker_address = "192.168.68.115" 
+client = mqtt.Client("Filter_Monitor") #create new instance
+data0 = ""
+data1 = ""
+
+
 # Here is the actual program:
 while True:
     try:
@@ -107,12 +118,23 @@ while True:
             lcd.cursor_pos = (2,0)
             lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
 
+            # Send data to home hub for storage and display in central hub
+            client.connect(broker_address) #connect to broker
+            data0 = ("{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}".format (flow1, flow2))
+            data1 = ("{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}".format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+            client.publish("Pond", data0)
+            client.publish("Pond", data1)
+            sleep(1)
+            client.disconnect()
+
             # Reset counters for next loop
             lcd.cursor_pos = (3,0)
             lcd.write_string('Next Update:')
             lastcount1 = count1
             lastcount2 = count2
             interval = 60
+            data0 = ""
+            data1 = ""
 
     except KeyboardInterrupt:
         print('Keyboard Interrupt Detected - Breaking program. program sleeps for 20 seconds to notify via LCD.')
