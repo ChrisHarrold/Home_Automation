@@ -4,6 +4,9 @@ from time import sleep
 from RPLCD import i2c
 from ds18b20 import DS18B20 #Temmp sensor library import
 
+first_run = True
+
+
 # values to initialise the LCD
 # -------------------------------------------------------------------
 lcdmode = 'i2c'
@@ -64,6 +67,9 @@ temp_temp_temp = 0
 # Here is the actual program:
 while True:
     try:
+        if first_run:
+            interval = 0
+
         while interval > 0:
             lcd.home()
             lcd.cursor_pos = (3,17)
