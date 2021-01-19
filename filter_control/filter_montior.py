@@ -71,6 +71,7 @@ while True:
             interval = interval - 1
             sleep(1)
         else:
+            lcd.clear()
             lcd.home()
             # Get current LPM from flow meters:
             current_count1 = count1 - lastcount1
@@ -101,6 +102,7 @@ while True:
             interval = 60
 
     except KeyboardInterrupt:
+        lcd.clear()
         lcd.home()
         lcd.write_string('Keyboard interrupt')
         lcd.cursor_pos = (2,0)
