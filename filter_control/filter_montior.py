@@ -114,6 +114,8 @@ while True:
         if first_run:
             interval = 0
             current_loop_count = reporting_loop_count
+            print("FIRST RUN")
+            print(current_loop_count)
             first_run = False
 
         while interval > 0:
