@@ -177,6 +177,7 @@ while True:
             # this is useful for debugging, but overkill for the dashboard and reporting. Recommend this is once per hour max.
             if current_loop_count == reporting_loop_count :
                 
+                print("Sending Data")
                 # Send data to home hub for storage and display in central hub
                 client.connect(broker_address) #connect to broker
                 client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
