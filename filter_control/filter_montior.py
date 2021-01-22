@@ -124,6 +124,9 @@ while True:
             interval = interval - 1
             sleep(1)
         else:
+            # Interval reseet is here so that it can be overridden by the debug if the switch is triggered
+            interval = 60
+            
             if GPIO.input(debug_pin) :
                 debug = True
             
@@ -135,6 +138,9 @@ while True:
                 lcd.write_string('--- Debug Mode ---')
                 lcd.cursor_pos = (2,0)
                 lcd.write_string('--- Switch ON ---')
+                lcd.cursor_pos = (3,0)
+                lcd.write_string('--- I = 10 ---')
+                interval = 10
                 sleep(5)
 
             lcd.clear()
@@ -194,7 +200,6 @@ while True:
             lcd.write_string('Next Update:')
             lastcount1 = count1
             lastcount2 = count2
-            interval = 60
             data0 = ""
             data1 = ""
 
