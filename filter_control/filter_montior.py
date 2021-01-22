@@ -179,11 +179,9 @@ while True:
             # This is the data hub report part of the script - if the debug switch is flipped "on"
             # the unit will send data to the hub on every cycle as defined in the loop interval value (default 60 seconds)
             # this is useful for debugging, but overkill for the dashboard and reporting. Recommend this is once per hour max.
-            print(current_loop_count)
-            print(reporting_loop_count)
+            
             if current_loop_count == reporting_loop_count :
 
-                print("Sending Data")
                 # Send data to home hub for storage and display in central hub
                 client.connect(broker_address) #connect to broker
                 client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
