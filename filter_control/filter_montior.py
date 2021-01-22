@@ -129,6 +129,8 @@ while True:
             
             if GPIO.input(debug_pin) :
                 debug = True
+            else :
+                debug = False
             
             if debug :
                 current_loop_count = reporting_loop_count
