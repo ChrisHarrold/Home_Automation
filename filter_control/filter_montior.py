@@ -136,9 +136,6 @@ while True:
                 lcd.cursor_pos = (2,0)
                 lcd.write_string('--- Switch ON ---')
                 sleep(5)
-            else :
-                current_loop_count = current_loop_count + 1
-            
 
             lcd.clear()
             lcd.home()
@@ -177,7 +174,7 @@ while True:
             print(current_loop_count)
             print(reporting_loop_count)
             if current_loop_count == reporting_loop_count :
-                         
+
                 print("Sending Data")
                 # Send data to home hub for storage and display in central hub
                 client.connect(broker_address) #connect to broker
@@ -192,6 +189,7 @@ while True:
                 current_loop_count = 0
 
             # Reset counters for next loop
+            current_loop_count = current_loop_count + 1
             lcd.cursor_pos = (3,0)
             lcd.write_string('Next Update:')
             lastcount1 = count1
