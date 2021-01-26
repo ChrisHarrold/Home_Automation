@@ -68,7 +68,17 @@ def Flow_meter2(channel):
 
 # Initialize killswitch callback
 def killswitch(channel):
-    raise Warning('Killswitch has been engaged')
+    print('KILLSWITCH ENGAGED. Program sleeps for 20 seconds to notify via LCD.')
+    lcd.clear()
+    lcd.home()
+    lcd.write_string('KILLSWITCH ACTIVE')
+    lcd.cursor_pos = (2,0)
+    lcd.write_string('TERMINATING')
+    sleep(20)
+    lcd.clear()
+    lcd.close()
+    GPIO.cleanup()
+    sys.exit()
 
 # Turn on the GPIO pins and configure for the various inputs, and interrupts
 # --------------------------------------------------------------------------
@@ -76,11 +86,11 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
-GPIO.add_event_detect(termination_pin, GPIO.RISING, callback=killswitch)
+GPIO.add_event_detect(termination_pin, GPIO.FALLING, callback=killswitch)
 
 
 # Initialize temp sensor
@@ -206,18 +216,6 @@ while True:
         lcd.close()
         GPIO.cleanup()
         sys.exit()
-    
-    except Warning:
-        print('KILLSWITCH ENGAGED. Program sleeps for 20 seconds to notify via LCD.')
-        lcd.clear()
-        lcd.home()
-        lcd.write_string('KILLSWITCH ACTIVE')
-        lcd.cursor_pos = (2,0)
-        lcd.write_string('TERMINATING')
-        sleep(20)
-        lcd.clear()
-        lcd.close()
-        GPIO.cleanup()
-        sys.exit()
+        
 
     
