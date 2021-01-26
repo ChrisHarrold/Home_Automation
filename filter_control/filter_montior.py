@@ -35,6 +35,7 @@ lastcount2 = 0
 current_count2 = 0
 flow1 = 0
 flow2 = 0
+filter_full = False
 
 # values to initialise the LCD
 # -------------------------------------------------------------------
@@ -57,6 +58,10 @@ lcd.home()
 #-------------------------------------------------------------------
 FLOW_SENSOR1 = 18 #Pin for sensor 1
 FLOW_SENSOR2 = 23 #Pin for sensor 2
+
+# Initialize the filter cleaning monitor switch
+# ------------------------------------------------------------------
+FILTER_SENSOR = 24
 
 # Initialize callbacks for flow metering - these run all the time regardless of what else is happening
 def Flow_meter1(channel):
@@ -90,6 +95,7 @@ GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
@@ -180,10 +186,14 @@ while True:
             lcd.cursor_pos = (2,0)
             lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
 
+            # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
+            # this will show up as a "true" in the Node Red flow on the other end
+            if GPIO.input(FILTER_SENSOR) :
+                filter_full = True
+                
             # This is the data hub report part of the script - if the debug switch is flipped "on"
             # the unit will send data to the hub on every cycle as defined in the loop interval value (default 60 seconds)
             # this is useful for debugging, but overkill for the dashboard and reporting. Recommend this is once per hour max.
-            
             if current_loop_count == reporting_loop_count :
 
                 # Send data to home hub for storage and display in central hub
@@ -191,8 +201,10 @@ while True:
                 client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
                 data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
                 data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+                data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
                 client.publish("Pond", data0)
                 client.publish("Pond", data1)
+                client.publish("Pond", data2)
                 sleep(1)
                 client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
                 client.disconnect()
