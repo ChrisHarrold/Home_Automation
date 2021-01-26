@@ -189,6 +189,8 @@ while True:
             # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
             # this will show up as a "true" in the Node Red flow on the other end
             if GPIO.input(FILTER_SENSOR) :
+                filter_full = False
+            else :
                 filter_full = True
                 
             # This is the data hub report part of the script - if the debug switch is flipped "on"
