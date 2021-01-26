@@ -91,7 +91,7 @@ GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
-GPIO.add_event_detect(termination_pin, GPIO.FALLING, callback=killswitch)
+GPIO.add_event_detect(termination_pin, GPIO.RISING, callback=killswitch)
 
 
 # Initialize temp sensor
