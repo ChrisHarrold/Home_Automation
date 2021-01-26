@@ -68,8 +68,7 @@ def Flow_meter2(channel):
 
 # Initialize killswitch callback
 def killswitch(channel):
-    terminate = True
-
+    raise Warning('Killswitch has been engaged')
 
 # Turn on the GPIO pins and configure for the various inputs, and interrupts
 # --------------------------------------------------------------------------
@@ -115,7 +114,7 @@ while True:
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
             sleep(1)
-        else:
+        else :
             # Interval reseet is here so that it can be overridden by the debug if the switch is triggered
             interval = 60
             
@@ -208,7 +207,7 @@ while True:
         GPIO.cleanup()
         sys.exit()
     
-    except terminate:
+    except Warning:
         print('KILLSWITCH ENGAGED. Program sleeps for 20 seconds to notify via LCD.')
         lcd.clear()
         lcd.home()
@@ -220,3 +219,5 @@ while True:
         lcd.close()
         GPIO.cleanup()
         sys.exit()
+
+    
