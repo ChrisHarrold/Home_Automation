@@ -9,8 +9,8 @@ GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 i = 100
 while i > 0 :
     if GPIO.input(FILTER_SENSOR) :
-        print('Detected a field!')
+        print('No Field')
     else :
-        print('No field')
+        print('There is a field!!')
     i = i - 1
     sleep(2)
