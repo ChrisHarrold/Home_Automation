@@ -91,7 +91,7 @@ GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
-GPIO.add_event_detect(termination_pin, GPIO.RISING, callback=killswitch)
+GPIO.add_event_detect(termination_pin, GPIO.FALLING, callback=killswitch)
 
 
 # Initialize temp sensor
@@ -112,9 +112,11 @@ data1 = ""
 while True:
     try:
         if first_run:
+            # when the script is first run - either from the command line or via cron, it will
+            # update the hub. This is part of the "keepalive" heartbeat process as well as allowing
+            # the device to get to debug mode faster if desired
             interval = 0
             current_loop_count = reporting_loop_count
-            print("FIRST RUN")
             first_run = False
 
         while interval > 0:
@@ -209,7 +211,7 @@ while True:
         lcd.home()
         lcd.write_string('Keyboard interrupt')
         lcd.cursor_pos = (2,0)
-        lcd.write_string('Program terminated')
+        lcd.write_string('Program terminating')
         sleep(20)
         lcd.clear()
         lcd.close()
