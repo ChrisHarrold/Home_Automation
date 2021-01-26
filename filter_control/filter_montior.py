@@ -19,6 +19,7 @@ debug_pin = 13
 termination_pin = 26
 terminate = False
 
+global interval
 interval = 60 #Change this value to match how often you wish to take readings (in seconds)
 reporting_loop_count = 60 # change this to how many intervals to report in to the hub (60, 60s loops = 1 hour)
 current_loop_count = 0
@@ -74,6 +75,8 @@ def killswitch(channel):
     lcd.write_string('KILLSWITCH ACTIVE')
     lcd.cursor_pos = (2,0)
     lcd.write_string('TERMINATING')
+    global interval
+    interval = 20
     sleep(20)
     lcd.clear()
     lcd.close()
