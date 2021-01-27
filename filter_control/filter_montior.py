@@ -183,6 +183,7 @@ while True:
                 the_tempC.append(temp_temp_temp)
                 the_tempF.append((temp_temp_temp * 1.8) + 32)
                 i += 1
+                print('Sensor reading: {0} '.format (temp_temp_temp))
             lcd.cursor_pos = (2,0)
             lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
 
