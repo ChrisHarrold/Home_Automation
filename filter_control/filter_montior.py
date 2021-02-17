@@ -111,9 +111,9 @@ while True:
                 print("Switching to maintenance mode - no data collection will occur")
                 lcd.clear()
                 lcd.cursor_pos = (0,0)
-                lcd.write_string('--- Maintenance Mode ---')
+                lcd.write_string(' Maintenance Mode ')
                 lcd.cursor_pos = (2,0)
-                lcd.write_string('--- Switch ON ---')
+                lcd.write_string('-- Switch ON --')
                 lcd.cursor_pos = (3,0)
                 lcd.write_string('{} '.format(maintenance_interval))
                 maintenance_interval = maintenance_interval + 1
