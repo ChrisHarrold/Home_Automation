@@ -105,8 +105,8 @@ data1 = ""
 # Here is the actual program:
 while True:
     try:
-        if maintenance_pin :
-            while maintenance_pin :
+        if GPIO.input(maintenance_pin) :
+            while GPIO.input(maintenance_pin) :
                 maintenance_mode_active = True
                 print("Switching to maintenance mode - no data collection will occur")
                 lcd.clear()
