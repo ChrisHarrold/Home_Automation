@@ -14,10 +14,11 @@ first_run = True # set this flag to teell the system to actually collect data th
 debug = False
 debug_pin = 13
 
-# kill switch - activating the kill switch will cause the script to terminate - it must be restarted
-# via a cron job or console commands
-termination_pin = 26
-terminate = False
+# Maintenance Mode - while the witch is ON nothing happens - no reporting and no collecting
+# This is meant to be switched to the "ON" state while servicing the filters, and then turning it off
+# Restarts the script as though it was a first run and starts the loop again
+maintenance_pin = 26
+maintenance_mode = False
 
 global interval
 interval = 60 #Change this value to match how often you wish to take readings (in seconds)
@@ -36,6 +37,8 @@ current_count2 = 0
 flow1 = 0
 flow2 = 0
 filter_full = False
+maintenance_mode_active = False
+maintenance_interval = 0
 
 # values to initialise the LCD
 # -------------------------------------------------------------------
@@ -59,7 +62,7 @@ lcd.home()
 FLOW_SENSOR1 = 18 #Pin for sensor 1
 FLOW_SENSOR2 = 23 #Pin for sensor 2
 
-# Initialize the filter cleaning monitor switch
+# Initialize the filter alert monitor switch
 # ------------------------------------------------------------------
 FILTER_SENSOR = 24
 
@@ -72,21 +75,6 @@ def Flow_meter2(channel):
    global count2
    count2 = count2+1
 
-# Initialize killswitch callback
-def killswitch(channel):
-    print('KILLSWITCH ENGAGED. Program sleeps for 20 seconds to notify via LCD.')
-    lcd.clear()
-    lcd.home()
-    lcd.write_string('KILLSWITCH ACTIVE')
-    lcd.cursor_pos = (2,0)
-    lcd.write_string('TERMINATING')
-    global interval
-    interval = 20
-    sleep(20)
-    lcd.clear()
-    lcd.close()
-    GPIO.cleanup()
-    sys.exit()
 
 # Turn on the GPIO pins and configure for the various inputs, and interrupts
 # --------------------------------------------------------------------------
@@ -94,13 +82,11 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(termination_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(maintenance_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down= PIO.PUD_UP)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
-GPIO.add_event_detect(termination_pin, GPIO.FALLING, callback=killswitch)
-
 
 # Initialize temp sensor
 # this uses 1-wir and is connected to GPIO4 (although i do not think this matters?)
@@ -119,6 +105,28 @@ data1 = ""
 # Here is the actual program:
 while True:
     try:
+        if maintenance_pin :
+            while maintenance_pin :
+                maintenance_mode_active = True
+                print("Switching to maintenance mode - no data collection will occur")
+                lcd.clear()
+                lcd.cursor_pos = (0,0)
+                lcd.write_string('--- Maintenance Mode ---')
+                lcd.cursor_pos = (2,0)
+                lcd.write_string('--- Switch ON ---')
+                lcd.cursor_pos = (3,0)
+                lcd.write_string('{} '.format(maintenance_interval))
+                maintenance_interval = maintenance_interval + 1
+                sleep(60)
+        else :
+            if maintenance_mode_active :
+                maintenance_mode_active = False
+                client.connect(broker_address) #connect to broker
+                client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
+                data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
+                client.publish("Pond", data0)
+                maintenance_interval = 0
+        
         if first_run:
             # when the script is first run - either from the command line or via cron, it will
             # update the hub. This is part of the "keepalive" heartbeat process as well as allowing
