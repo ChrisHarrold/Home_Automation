@@ -83,7 +83,7 @@ GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(maintenance_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down= PIO.PUD_UP)
+GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
