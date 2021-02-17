@@ -89,7 +89,7 @@ GPIO.add_event_detect(FLOW_SENSOR1, GPIO.FALLING, callback=Flow_meter1)
 GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
 
 # Initialize temp sensor
-# this uses 1-wir and is connected to GPIO4 (although i do not think this matters?)
+# this uses 1-wire and is connected to GPIO4 (although i do not think this matters?)
 temp_sensor = DS18B20()
 the_tempC = []
 the_tempF = []
