@@ -178,6 +178,8 @@ def Collect_Sensor_Data() :
             filter_full = False
         else :
             filter_full = True
+        
+        return the_tempC, the_tempF
               
 
 # Here is the actual program:
@@ -199,7 +201,7 @@ while True:
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
                 Collect_Sensor_Data()
-                Publish_Data()
+                Publish_Data(the_tempF, the_tempC)
 
         if first_run:
             # when the script is first run - either from the command line or via cron, it will
@@ -233,7 +235,7 @@ while True:
                 if maintenance_mode_active :
                     Collect_Sensor_Data()
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
-                    Publish_Data()
+                    Publish_Data(the_tempC, the_tempF)
                     maintenance_interval = 0
                     maintenance_mode_active = False
                     lcd.clear()
