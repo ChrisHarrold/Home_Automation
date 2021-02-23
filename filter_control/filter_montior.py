@@ -151,6 +151,9 @@ def Collect_Sensor_Data() :
         # only the FIRST TIME the sensor is initialized. In order to update the sensor
         # you need to run these two command again. I feel the way RPi does 1-Wire
         # is a major deficiency really. Having to shell to the OS is not ideal.
+        global the_tempF
+        global the_tempC
+        global temp_temp_temp
         the_tempC = []
         the_tempF = []
         temp_temp_temp = 0
