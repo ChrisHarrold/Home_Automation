@@ -121,9 +121,7 @@ data3 = ""
 def Publish_Data():
     
     client.connect(broker_address) #connect to broker
-    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')
-    data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
-    data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
     data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
     client.publish("Pond", data0)
     client.publish("Pond", data1)
@@ -145,7 +143,16 @@ def Collect_Sensor_Data() :
         lcd.write_string('Flow 1 {0:.2f} LPM'.format (flow1))
         lcd.cursor_pos = (1,0)
         lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
-        
+
+        # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
+        # this will show up as a "true" in the Node Red flow on the other end
+        if GPIO.input(FILTER_SENSOR) :
+            filter_full = False
+        else :
+            filter_full = True
+        data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
+              
+def Collect_Temp_Data() :
         # Get current out-flow water temperatures:
         # the "library" that is included DOES perform these two steps BUT
         # only the FIRST TIME the sensor is initialized. In order to update the sensor
@@ -171,16 +178,10 @@ def Collect_Sensor_Data() :
             print('Sensor reading: {0} '.format (temp_temp_temp))
         lcd.cursor_pos = (2,0)
         lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
+        data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+    
+        return
 
-        # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
-        # this will show up as a "true" in the Node Red flow on the other end
-        if GPIO.input(FILTER_SENSOR) :
-            filter_full = False
-        else :
-            filter_full = True
-        
-        return the_tempC, the_tempF
-              
 
 # Here is the actual program:
 while True:
@@ -201,6 +202,7 @@ while True:
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
                 Collect_Sensor_Data()
+                Collect_Temp_Data
                 Publish_Data(the_tempF, the_tempC)
 
         if first_run:
@@ -234,6 +236,7 @@ while True:
                 # indicators and revert to normal operation
                 if maintenance_mode_active :
                     Collect_Sensor_Data()
+                    Collect_Temp_Data()
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
                     Publish_Data(the_tempC, the_tempF)
                     maintenance_interval = 0
@@ -253,10 +256,10 @@ while True:
             # Interval reset
             interval = 60
             
-            # This is the data hub report part of the script - if the debug switch is flipped "on"
-            # the unit will send data to the hub on every cycle as defined in the loop interval value (default 60 seconds)
-            # this is useful for debugging, but overkill for the dashboard and reporting. Recommend this is once per hour max.
+            # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                Collect_Sensor_Data()
+                Collect_Temp_Data()
                 Publish_Data()
                 
             # Reset, clear all the data strings, and restart the regular loop
