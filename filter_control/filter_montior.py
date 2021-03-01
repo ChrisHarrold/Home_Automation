@@ -161,7 +161,7 @@ def Collect_Flow_Data() :
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
         print(data0)
 
-        return data0
+        return data0, filter_full
               
 def Collect_Temp_Data() :
         # Get current out-flow water temperatures:
@@ -272,6 +272,7 @@ while True:
                 print('Sending data')
                 Collect_Flow_Data()
                 print(data0)
+                print(filter_full)
                 Collect_Temp_Data()
                 Publish_Data(data0, data1, data2, data3)
                 
