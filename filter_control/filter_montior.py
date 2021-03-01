@@ -5,6 +5,9 @@ from RPLCD import i2c
 from ds18b20 import DS18B20 #Temp sensor library import
 import paho.mqtt.client as mqtt #import the mqtt client from the paho library
 
+# RUNTIME INDICATOR
+active_running_led = 5
+
 # tag up for the first run (gets changed once into the loop)
 # also add values for eventual debug mode and terminate control (will be toggle switches)
 first_run = True
@@ -43,7 +46,6 @@ lastcount2 = 0
 current_count2 = 0
 flow1 = 0
 flow2 = 0
-filter_full = False
 maintenance_mode_active = False
 maintenance_interval = 0
 data3 =""
@@ -65,15 +67,16 @@ lcd = i2c.CharLCD(i2c_expander, address, port=port, charmap=charmap, cols=cols, 
 lcd.clear()
 lcd.home()
 
-# values to intialize the flow meters and the various counters for tracking and measuring flow
-# rate on a per-interval basis
+# values to intialize the flow meters
 #-------------------------------------------------------------------
 FLOW_SENSOR1 = 18 #Pin for sensor 1
 FLOW_SENSOR2 = 23 #Pin for sensor 2
 
-# Initialize the filter alert monitor switch
+# Initialize the filter alert monitor
 # ------------------------------------------------------------------
 FILTER_SENSOR = 24
+filter_full = False
+filter_alert_LED = 6
 
 # Initialize callbacks for flow metering - these run all the time regardless of what else is happening
 def Flow_meter1(channel):
@@ -86,6 +89,7 @@ def Flow_meter2(channel):
 
 
 # Turn on the GPIO pins and configure for the various inputs, and interrupts
+# as well as activating the runtime LED
 # --------------------------------------------------------------------------
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(FLOW_SENSOR1, GPIO.IN, pull_up_down = GPIO.PUD_UP)
@@ -93,6 +97,10 @@ GPIO.setup(FLOW_SENSOR2, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(maintenance_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(filter_alert_LED, GPIO.OUT)
+GPIO.setup(active_running_led, GPIO.OUT, intial=1)
+
+
 
 # these two add the listener threads to th GPIO for the flow meter - they will count the pulses in the background
 # while the program runs, and then will update the counter(s) for readout on the interval
@@ -152,7 +160,9 @@ def Publish_Data(fdata, tdata, mmdata):
     # this will show up as a "true" in the Node Red flow on the other end
     if (GPIO.input(FILTER_SENSOR) == False) :
         filter_full = True
+        GPIO.output(filter_alert_LED, 1)
     else :
+        GPIO.output(filter_alert_LED, 0)
         filter_full = False
     data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
         
@@ -214,7 +224,7 @@ while True:
                     lcd.cursor_pos = (2,0)
                     lcd.write_string('-- Switch ON --')
                     lcd.cursor_pos = (3,0)
-                    lcd.write_string('{} '.format(maintenance_interval))
+                    lcd.write_string('{} minutes have passed'.format(maintenance_interval))
                     maintenance_interval = maintenance_interval + 1
                     sleep(60)
             else :
@@ -235,10 +245,17 @@ while True:
                     lcd.write_string('Next Update:')
             
             # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
+                if (GPIO.input(FILTER_SENSOR) == False) :
+                    filter_full = True
+                    GPIO.output(filter_alert_LED, 1)
+                else :
+                    GPIO.output(filter_alert_LED, 0)
+                    filter_full = False
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
+            current_loop_count = current_loop_count + 1
             sleep(1)
         
         else :
@@ -271,6 +288,7 @@ while True:
         sleep(20)
         lcd.clear()
         lcd.close()
+        GPIO.output(active_running_led, 0)
         GPIO.cleanup()
         sys.exit()
         
