@@ -98,7 +98,7 @@ GPIO.setup(debug_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(maintenance_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(FILTER_SENSOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(filter_alert_LED, GPIO.OUT)
-GPIO.setup(active_running_led, GPIO.OUT, intial=1)
+GPIO.setup(active_running_led, GPIO.OUT, initial=1)
 
 
 
