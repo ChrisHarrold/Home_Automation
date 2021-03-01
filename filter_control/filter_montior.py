@@ -181,8 +181,6 @@ def Collect_Temp_Data() :
         lcd.cursor_pos = (2,0)
         lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
-    
-        return
 
 
 # Here is the actual program:
