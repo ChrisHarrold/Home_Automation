@@ -244,12 +244,11 @@ while True:
         else :
             # Interval reset
             interval = 60
-            
+            flowdata = Collect_Flow_Data()
+            tempdata = Collect_Temp_Data()
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
                 print('Reporting Loop - Data will be sent')
-                flowdata = Collect_Flow_Data()
-                tempdata = Collect_Temp_Data()
                 Publish_Data(flowdata, tempdata, data3)
                 
             # Reset, clear all the data strings, and restart the regular loop
