@@ -77,9 +77,11 @@ FILTER_SENSOR = 24
 
 # Initialize callbacks for flow metering - these run all the time regardless of what else is happening
 def Flow_meter1(channel):
+   global count1
    count1 = count1 + 1
 
 def Flow_meter2(channel):
+   global count2
    count2 = count2 + 1
 
 
