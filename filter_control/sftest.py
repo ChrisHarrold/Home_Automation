@@ -7,7 +7,7 @@ def create_data_to_publish () :
     data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
     return data0
 
-def publish_data (d1, d2) :
+def publish_data (d1) :
     print(d1)
     return d1
 
