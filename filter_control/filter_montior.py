@@ -118,7 +118,7 @@ data2 = ""
 data3 = ""
 
 
-def Publish_Data():
+def Publish_Data(data0, data1, data2, data3):
     
     client.connect(broker_address) #connect to broker
     client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
@@ -156,6 +156,8 @@ def Collect_Flow_Data() :
         else :
             filter_full = True
         data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
+
+        return data0
               
 def Collect_Temp_Data() :
         # Get current out-flow water temperatures:
@@ -185,6 +187,7 @@ def Collect_Temp_Data() :
         lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
 
+        return data1
 
 # Here is the actual program:
 while True:
@@ -205,8 +208,8 @@ while True:
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
                 Collect_Flow_Data()
-                Collect_Temp_Data
-                Publish_Data(the_tempF, the_tempC)
+                Collect_Temp_Data()
+                Publish_Data(data0, data1, data2, data3)
 
         if first_run:
             # when the script is first run - either from the command line or via cron, it will
@@ -242,7 +245,7 @@ while True:
                     Collect_Flow_Data()
                     Collect_Temp_Data()
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
-                    Publish_Data(the_tempC, the_tempF)
+                    Publish_Data(data0, data1, data2, data3)
                     maintenance_interval = 0
                     maintenance_mode_active = False
                     lcd.clear()
@@ -265,7 +268,7 @@ while True:
                 print('Sending data')
                 Collect_Flow_Data()
                 Collect_Temp_Data()
-                Publish_Data()
+                Publish_Data(data0, data1, data2, data3)
                 
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = 0
