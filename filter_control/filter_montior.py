@@ -131,6 +131,7 @@ def Publish_Data():
     client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
     sleep(1)
     client.disconnect()
+    print('Data Published')
 
 
 def Collect_Sensor_Data() :
@@ -211,6 +212,7 @@ while True:
             interval = 0
             current_loop_count = reporting_loop_count
             first_run = False
+            print('First Run Confirm')
 
         while interval > 0:
             
@@ -258,6 +260,7 @@ while True:
             
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                print('Sending data')
                 Collect_Sensor_Data()
                 Collect_Temp_Data()
                 Publish_Data()
