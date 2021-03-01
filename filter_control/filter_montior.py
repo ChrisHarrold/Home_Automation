@@ -158,6 +158,7 @@ def Collect_Flow_Data() :
             filter_full = False
         else :
             filter_full = True
+        print(filter_full)
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
         print(data0)
 
