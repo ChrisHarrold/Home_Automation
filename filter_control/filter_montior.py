@@ -134,7 +134,7 @@ def Publish_Data():
     print('Data Published')
 
 
-def Collect_Sensor_Data() :
+def Collect_Flow_Data() :
     # Get current LPM from flow meters:
         current_count1 = count1 - lastcount1
         current_count2 = count2 - lastcount2
@@ -144,6 +144,7 @@ def Collect_Sensor_Data() :
         lcd.write_string('Flow 1 {0:.2f} LPM'.format (flow1))
         lcd.cursor_pos = (1,0)
         lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
+        print('Flow rate 1: {0} \n Flow rate 2 {1}'.format (flow1, flow2))
 
         # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
         # this will show up as a "true" in the Node Red flow on the other end
@@ -202,7 +203,7 @@ while True:
                 lcd.cursor_pos = (3,0)
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
-                Collect_Sensor_Data()
+                Collect_Flow_Data()
                 Collect_Temp_Data
                 Publish_Data(the_tempF, the_tempC)
 
@@ -237,7 +238,7 @@ while True:
                 # the ability to have a "last cleaned" timestamp on the dashboard as well. Once complete it will clear the maintenance
                 # indicators and revert to normal operation
                 if maintenance_mode_active :
-                    Collect_Sensor_Data()
+                    Collect_Flow_Data()
                     Collect_Temp_Data()
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
                     Publish_Data(the_tempC, the_tempF)
@@ -261,7 +262,7 @@ while True:
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
                 print('Sending data')
-                Collect_Sensor_Data()
+                Collect_Flow_Data()
                 Collect_Temp_Data()
                 Publish_Data()
                 
