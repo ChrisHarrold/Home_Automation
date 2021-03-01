@@ -155,7 +155,7 @@ def Collect_Flow_Data() :
             filter_full = False
         else :
             filter_full = True
-        data0 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2))
+        data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
 
         return data0
               
@@ -208,6 +208,7 @@ while True:
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
                 Collect_Flow_Data()
+                print(data0)
                 Collect_Temp_Data()
                 Publish_Data(data0, data1, data2, data3)
 
