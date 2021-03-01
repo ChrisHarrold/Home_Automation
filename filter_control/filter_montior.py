@@ -123,6 +123,9 @@ def Publish_Data():
     client.connect(broker_address) #connect to broker
     client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
     data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
+    print(data0)
+    print(data1)
+    print(data2)
     client.publish("Pond", data0)
     client.publish("Pond", data1)
     client.publish("Pond", data2)
