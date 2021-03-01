@@ -115,7 +115,6 @@ def Collect_Flow_Data() :
         lcd.write_string('Flow 1 {0:.2f} LPM'.format (flow1))
         lcd.cursor_pos = (1,0)
         lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
-        print('Flow rate 1: {0} \n Flow rate 2 {1}'.format (flow1, flow2))
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
         return data0
               
@@ -146,7 +145,6 @@ def Collect_Temp_Data() :
         return data1
 
 def Publish_Data(fdata, tdata, mmdata):
-    print(fdata)
 
     # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
     # this will show up as a "true" in the Node Red flow on the other end
@@ -247,7 +245,7 @@ while True:
             
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
-                print('Sending data')
+                print('Reporting Loop - Data will be sent to hub')
                 flowdata = Collect_Flow_Data()
                 tempdata = Collect_Temp_Data()
                 Publish_Data(flowdata, tempdata, data3)
