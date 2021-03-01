@@ -209,7 +209,6 @@ while True:
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
                 Collect_Flow_Data()
-                print(data0)
                 Collect_Temp_Data()
                 Publish_Data(data0, data1, data2, data3)
 
@@ -269,6 +268,7 @@ while True:
             if current_loop_count == reporting_loop_count :
                 print('Sending data')
                 Collect_Flow_Data()
+                print(data0)
                 Collect_Temp_Data()
                 Publish_Data(data0, data1, data2, data3)
                 
