@@ -118,7 +118,10 @@ data2 = ""
 data3 = ""
 
 
-def Publish_Data(data0, data1, data2, data3):
+def Publish_Data(fdata, tdata, ffdata, mmdata):
+    data0 = fdata
+    data1 = tdata
+    data3 = mmdata
     
     client.connect(broker_address) #connect to broker
     client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
