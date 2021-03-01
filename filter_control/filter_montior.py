@@ -154,10 +154,12 @@ def Collect_Flow_Data() :
 
         # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
         # this will show up as a "true" in the Node Red flow on the other end
-        if GPIO.input(FILTER_SENSOR) :
-            filter_full = False
-        else :
+        if (GPIO.input(FILTER_SENSOR) == False) :
             filter_full = True
+        else :
+            filter_full = False
+        
+        
         print(filter_full)
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
         print(data0)
