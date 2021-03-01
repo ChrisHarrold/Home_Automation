@@ -255,8 +255,6 @@ while True:
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
-            current_loop_count = current_loop_count + 1
-            print(current_loop_count)
             sleep(1)
         
         else :
@@ -268,10 +266,11 @@ while True:
                 tempdata = Collect_Temp_Data()
                 print('Reporting Loop - Data will be sent')
                 Publish_Data(flowdata, tempdata, data3)
+                current_loop_count = 0
                 
             # Reset, clear all the data strings, and restart the regular loop
-            current_loop_count = 0
             current_loop_count = current_loop_count + 1
+            print(current_loop_count)
             lcd.cursor_pos = (3,0)
             lcd.write_string('Next Update:')
             lcd.cursor_pos = (3,17)
