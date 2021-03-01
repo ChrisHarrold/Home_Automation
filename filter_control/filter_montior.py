@@ -46,6 +46,7 @@ flow2 = 0
 filter_full = False
 maintenance_mode_active = False
 maintenance_interval = 0
+data3 =""
 
 # values to initialise the LCD
 # -------------------------------------------------------------------
@@ -99,46 +100,10 @@ GPIO.add_event_detect(FLOW_SENSOR2, GPIO.FALLING, callback=Flow_meter2)
 # Initialize temp sensor
 # this uses 1-wire and is connected to GPIO4 (although i do not think this matters?)
 temp_sensor = DS18B20()
-global the_tempC
-global the_tempF
-global temp_temp_temp
-
 
 # initialize MQTT for sending to the home hub and spcify the variables for holding messages
 broker_address = "192.168.68.115" 
-global client 
 client = mqtt.Client("Filter_Monitor") #create new instance
-global data0
-global data1
-global data2
-global data3
-data0 = ""
-data1 = ""
-data2 = ""
-data3 = ""
-
-
-def Publish_Data(fdata, tdata, ffdata, mmdata):
-    data0 = fdata
-    data1 = tdata
-    data3 = mmdata
-    
-    client.connect(broker_address) #connect to broker
-    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
-    data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
-    print(data0)
-    print(data1)
-    print(data2)
-    client.publish("Pond", data0)
-    client.publish("Pond", data1)
-    client.publish("Pond", data2)
-    if maintenance_mode_active :
-        client.publish("Pond", data3)
-    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
-    sleep(1)
-    client.disconnect()
-    print('Data Published')
-
 
 def Collect_Flow_Data() :
     # Get current LPM from flow meters:
@@ -151,20 +116,8 @@ def Collect_Flow_Data() :
         lcd.cursor_pos = (1,0)
         lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
         print('Flow rate 1: {0} \n Flow rate 2 {1}'.format (flow1, flow2))
-
-        # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
-        # this will show up as a "true" in the Node Red flow on the other end
-        if (GPIO.input(FILTER_SENSOR) == False) :
-            filter_full = True
-        else :
-            filter_full = False
-        
-        
-        print(filter_full)
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
-        print(data0)
-
-        return data0, filter_full
+        return data0
               
 def Collect_Temp_Data() :
         # Get current out-flow water temperatures:
@@ -172,9 +125,6 @@ def Collect_Temp_Data() :
         # only the FIRST TIME the sensor is initialized. In order to update the sensor
         # you need to run these two command again. I feel the way RPi does 1-Wire
         # is a major deficiency really. Having to shell to the OS is not ideal.
-        global the_tempF
-        global the_tempC
-        global temp_temp_temp
         the_tempC = []
         the_tempF = []
         temp_temp_temp = 0
@@ -193,8 +143,32 @@ def Collect_Temp_Data() :
         lcd.cursor_pos = (2,0)
         lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
-
         return data1
+
+def Publish_Data(fdata, tdata, mmdata):
+    print(fdata)
+
+    # Filter level check - the the hall switch has been triggered, the filter is close to needing cleaned
+    # this will show up as a "true" in the Node Red flow on the other end
+    if (GPIO.input(FILTER_SENSOR) == False) :
+        filter_full = True
+    else :
+        filter_full = False
+    data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
+        
+    client.connect(broker_address) #connect to broker
+    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
+    client.publish("Pond", fdata)
+    client.publish("Pond", tdata)
+    client.publish("Pond", data2)
+    if maintenance_mode_active :
+        client.publish("Pond", mmdata)
+    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
+    sleep(1)
+    client.disconnect()
+    print('Data Published')
+
+
 
 # Here is the actual program:
 while True:
@@ -214,9 +188,9 @@ while True:
                 lcd.cursor_pos = (3,0)
                 lcd.write_string('--- I = 10 ---')
                 sleep(10)
-                Collect_Flow_Data()
-                Collect_Temp_Data()
-                Publish_Data(data0, data1, data2, data3)
+                flowdata = Collect_Flow_Data()
+                tempdata = Collect_Temp_Data()
+                Publish_Data(flowdata, tempdata, data3)
 
         if first_run:
             # when the script is first run - either from the command line or via cron, it will
@@ -249,12 +223,13 @@ while True:
                 # the ability to have a "last cleaned" timestamp on the dashboard as well. Once complete it will clear the maintenance
                 # indicators and revert to normal operation
                 if maintenance_mode_active :
-                    Collect_Flow_Data()
-                    Collect_Temp_Data()
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
-                    Publish_Data(data0, data1, data2, data3)
+                    flowdata = Collect_Flow_Data()
+                    tempdata = Collect_Temp_Data()
+                    Publish_Data(flowdata, tempdata, data3)
                     maintenance_interval = 0
                     maintenance_mode_active = False
+                    data3 = ""
                     lcd.clear()
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
@@ -273,11 +248,9 @@ while True:
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
                 print('Sending data')
-                Collect_Flow_Data()
-                print(data0)
-                print(filter_full)
-                Collect_Temp_Data()
-                Publish_Data(data0, data1, data2, data3)
+                flowdata = Collect_Flow_Data()
+                tempdata = Collect_Temp_Data()
+                Publish_Data(flowdata, tempdata, data3)
                 
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = 0
@@ -288,10 +261,6 @@ while True:
             lcd.write_string('{} '.format(interval))
             lastcount1 = count1
             lastcount2 = count2
-            data0 = ""
-            data1 = ""
-            data2 = ""
-            data3 = ""
 
     except KeyboardInterrupt:
         print('Keyboard Interrupt Detected - Breaking program. program sleeps for 20 seconds to notify via LCD.')
