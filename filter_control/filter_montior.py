@@ -256,15 +256,16 @@ while True:
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
             current_loop_count = current_loop_count + 1
+            print(current_loop_count)
             sleep(1)
         
         else :
             # Interval reset
             interval = 60
-            flowdata = Collect_Flow_Data()
-            tempdata = Collect_Temp_Data()
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                flowdata = Collect_Flow_Data()
+                tempdata = Collect_Temp_Data()
                 print('Reporting Loop - Data will be sent')
                 Publish_Data(flowdata, tempdata, data3)
                 
