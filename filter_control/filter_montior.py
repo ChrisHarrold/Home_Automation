@@ -14,7 +14,7 @@ first_run = True
 # Debug mode - if the debug toggle is activated, this will be set true later in the code
 global debug
 debug = False
-debug_pin = 13
+debug_pin = 25
 # Maintenance Mode - while the witch is ON nothing happens - no reporting and no collecting
 # This is meant to be switched to the "ON" state while servicing the filters, and then turning it off
 # Restarts the script as though it was a first run and starts the loop again
