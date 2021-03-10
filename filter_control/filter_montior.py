@@ -12,6 +12,7 @@ active_running_led = 5
 # also add values for eventual debug mode and terminate control (will be toggle switches)
 first_run = True
 # Debug mode - if the debug toggle is activated, this will be set true later in the code
+global debug
 debug = False
 debug_pin = 13
 # Maintenance Mode - while the witch is ON nothing happens - no reporting and no collecting
@@ -191,8 +192,9 @@ while True:
             print('First Run Confirm')
 
         while interval > 0:
-        # triggering the debug mode will override all other operations and force the devicex into debug
-        # this will update the hub every 10 seconds
+            
+            # triggering the debug mode will override all other operations and force the device into debug
+            # this will update the hub every 10 seconds
             if GPIO.input(debug_pin) :
                 debug = True
                 print("Debug enabled - data will be updated every 10 seconds")
@@ -203,6 +205,7 @@ while True:
                 lcd.write_string('--- Switch ON ---')
                 lcd.cursor_pos = (3,0)
                 lcd.write_string('--- I = 10 ---')
+                
                 while GPIO.input(debug_pin) :
                     sleep(10)
                     if (GPIO.input(FILTER_SENSOR) == False) :
@@ -216,6 +219,7 @@ while True:
                     Publish_Data(flowdata, tempdata, data3) 
             
             else :
+                
                 if debug == True :
                     debug = False
                     print("Debug cancelled - resuming normal operation")
@@ -257,6 +261,10 @@ while True:
                     maintenance_mode_active = False
                     data3 = ""
                     lcd.clear()
+                    lcd.cursor_pos = (0,0)
+                    lcd.write_string(' Maintenance Mode ')
+                    lcd.cursor_pos = (2,0)
+                    lcd.write_string('-- Switch OFF --')
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
             
