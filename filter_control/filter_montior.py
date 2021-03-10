@@ -12,7 +12,6 @@ active_running_led = 5
 # also add values for eventual debug mode and terminate control (will be toggle switches)
 first_run = True
 # Debug mode - if the debug toggle is activated, this will be set true later in the code
-global debug
 debug = False
 debug_pin = 13
 # Maintenance Mode - while the witch is ON nothing happens - no reporting and no collecting
@@ -183,25 +182,6 @@ def Publish_Data(fdata, tdata, mmdata):
 # Here is the actual program:
 while True:
     try:
-        # triggering the debug mode will override all other operations and force the devicex into debug
-        # this will update the hub every 10 seconds
-        if GPIO.input(debug_pin) :
-            
-            while GPIO.input(debug_pin) :
-                debug = True
-                print("Debug triggered by switch - report will be sent to hub every 10 seconds")
-                lcd.clear()
-                lcd.cursor_pos = (0,0)
-                lcd.write_string('--- Debug Mode ---')
-                lcd.cursor_pos = (2,0)
-                lcd.write_string('--- Switch ON ---')
-                lcd.cursor_pos = (3,0)
-                lcd.write_string('--- I = 10 ---')
-                sleep(10)
-                flowdata = Collect_Flow_Data()
-                tempdata = Collect_Temp_Data()
-                Publish_Data(flowdata, tempdata, data3)
-
         if first_run:
             # when the script is first run - either from the command line or via cron, it will
             # update the hub.
@@ -211,6 +191,42 @@ while True:
             print('First Run Confirm')
 
         while interval > 0:
+        # triggering the debug mode will override all other operations and force the devicex into debug
+        # this will update the hub every 10 seconds
+            if GPIO.input(debug_pin) :
+                debug = True
+                print("Debug enabled - data will be updated every 10 seconds")
+                lcd.clear()
+                lcd.cursor_pos = (0,0)
+                lcd.write_string('--- Debug Mode ---')
+                lcd.cursor_pos = (2,0)
+                lcd.write_string('--- Switch ON ---')
+                lcd.cursor_pos = (3,0)
+                lcd.write_string('--- I = 10 ---')
+                while GPIO.input(debug_pin) :
+                    sleep(10)
+                    if (GPIO.input(FILTER_SENSOR) == False) :
+                        filter_full = True
+                        GPIO.output(filter_alert_LED, 1)
+                    else :
+                        GPIO.output(filter_alert_LED, 0)
+                        filter_full = False
+                    flowdata = Collect_Flow_Data()
+                    tempdata = Collect_Temp_Data()
+                    Publish_Data(flowdata, tempdata, data3) 
+            
+            else :
+                if debug == True :
+                    debug = False
+                    print("Debug cancelled - resuming normal operation")
+                    interval = 60
+                    lcd.clear()
+                    lcd.cursor_pos = (0,0)
+                    lcd.write_string(' Debug Mode ')
+                    lcd.cursor_pos = (2,0)
+                    lcd.write_string('-- Switch OFF --')
+                    lcd.cursor_pos = (3,0)
+                    lcd.write_string('Next Update:')
             
             if GPIO.input(maintenance_pin) :
                 # If maintenance mode has been activated, the unit will operate in this mode until the switch is flipped off again
@@ -245,12 +261,12 @@ while True:
                     lcd.write_string('Next Update:')
             
             # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
-                if (GPIO.input(FILTER_SENSOR) == False) :
-                    filter_full = True
-                    GPIO.output(filter_alert_LED, 1)
-                else :
-                    GPIO.output(filter_alert_LED, 0)
-                    filter_full = False
+            if (GPIO.input(FILTER_SENSOR) == False) :
+                filter_full = True
+                GPIO.output(filter_alert_LED, 1)
+            else :
+                GPIO.output(filter_alert_LED, 0)
+                filter_full = False
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
