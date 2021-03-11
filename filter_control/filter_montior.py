@@ -224,6 +224,7 @@ while True:
                     debug = False
                     print("Debug cancelled - resuming normal operation")
                     interval = 60
+                    current_loop_count = 0
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
                     lcd.write_string(' Debug Mode ')
@@ -267,6 +268,8 @@ while True:
                     lcd.write_string('-- Switch OFF --')
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
+                    interval = 60
+                    current_loop_count = 0
             
             # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
             if (GPIO.input(FILTER_SENSOR) == False) :
