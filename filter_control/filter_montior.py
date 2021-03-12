@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import RPi.GPIO as GPIO
 import sys, datetime, os
 from time import sleep
