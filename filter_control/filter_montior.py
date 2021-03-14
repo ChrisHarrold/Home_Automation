@@ -319,6 +319,3 @@ while True:
         GPIO.output(active_running_led, 0)
         GPIO.cleanup()
         sys.exit()
-        
-
-    
