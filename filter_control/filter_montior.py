@@ -16,12 +16,15 @@ first_run = True
 global debug
 debug = False
 debug_pin = 25
+dreport = False
+
 # Maintenance Mode - while the witch is ON nothing happens - no reporting and no collecting
 # This is meant to be switched to the "ON" state while servicing the filters, and then turning it off
 # Restarts the script as though it was a first run and starts the loop again
 maintenance_pin = 26
 global maintenance_mode
 maintenance_mode = False
+mreport = False
 
 global interval
 interval = 60 #Change this value to match how often you wish to take readings (in seconds)
@@ -221,6 +224,8 @@ while True:
             
             else :
                 if debug == True :
+                    debug = False
+                    dreport = True
                     print("Debug cancelled - resuming normal operation")
                     interval = 10
                     current_loop_count = reporting_loop_count
@@ -254,6 +259,8 @@ while True:
                 # the ability to have a "last cleaned" timestamp on the dashboard as well.
 
                 if maintenance_mode_active :
+                    maintenance_mode_active = False
+                    mreport = True
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
                     lcd.write_string(' Maintenance Mode ')
@@ -284,17 +291,17 @@ while True:
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
                 print('Reporting Loop - Data will be sent')
-                if maintenance_mode_active :
+                if mreport :
                     data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
                     maintenance_interval = 0
-                    maintenance_mode_active = False
                     lcd.clear()
                     flowdata = Collect_Flow_Data()
                     tempdata = Collect_Temp_Data()
                     Publish_Data(flowdata, tempdata, data3)
                     current_loop_count = 0
-                elif debug == True :
-                    debug = False
+                    mreport = False
+                elif dreport :
+                    dreport = False
                     lcd.clear()
                     flowdata = Collect_Flow_Data()
                     tempdata = Collect_Temp_Data()
@@ -325,7 +332,7 @@ while True:
         lcd.home()
         lcd.write_string('Keyboard interrupt')
         lcd.cursor_pos = (2,0)
-        lcd.write_string('Program terminating')
+        lcd.write_string('Program halting')
         sleep(20)
         lcd.clear()
         lcd.close()
