@@ -198,7 +198,6 @@ while True:
             # this will update the hub every 10 seconds
             if GPIO.input(debug_pin) :
                 debug = True
-                interval = 10
                 print("Debug enabled - data will be updated every 10 seconds")
                 lcd.clear()
                 lcd.cursor_pos = (0,0)
@@ -250,10 +249,10 @@ while True:
                     interval = 60
                     sleep(5)
             else :
-                # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the sensor data
-                # add the information about how long the mmaintenance interval was, and publish to the dashboard host. This will give you
-                # the ability to have a "last cleaned" timestamp on the dashboard as well. Once complete it will clear the maintenance
-                # indicators and revert to normal operation
+                # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the LCD
+                # and set the interval short and the reporting to "TRUE" This will give you
+                # the ability to have a "last cleaned" timestamp on the dashboard as well.
+                
                 if maintenance_mode_active :
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
@@ -265,7 +264,8 @@ while True:
                     interval = 5
                     current_loop_count = reporting_loop_count
             
-            # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
+            # If maintenance mode or debug mode are not activated, the loop simply continues the countdown and updates the LCD
+            # it will check the filter sensor on every loop to confirm if it needs to light the light on the panel 
             if (GPIO.input(FILTER_SENSOR) == False) :
                 filter_full = True
                 GPIO.output(filter_alert_LED, 1)
