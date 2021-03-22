@@ -151,8 +151,8 @@ def Collect_Temp_Data() :
             i += 1
             print('Sensor reading: {0} '.format (temp_temp_temp))
         lcd.cursor_pos = (2,0)
-        lcd.write_string('Temp C: {0:.2f}/{1:.2f} '.format (the_tempC[0], the_tempC[1]))
-        data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T1_F\":\"{2:.2f}\",\"T2_F\":\"{3:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1],the_tempF[0], the_tempF[1]))
+        lcd.write_string('Temp {0:.2f}/{1:.2f}/{2:.2f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
+        data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T3_C\":\"{2:.2f}\",\"T1_F\":\"{3:.2f}\",\"T2_F\":\"{4:.2f}\",\"T3_F\":\"{5:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1], the_tempC[2],the_tempF[0], the_tempF[1], the_tempF[2]))
         return data1
 
 def Publish_Data(fdata, tdata, mmdata):
@@ -221,12 +221,10 @@ while True:
                     Publish_Data(flowdata, tempdata, data3) 
             
             else :
-                
                 if debug == True :
-                    debug = False
                     print("Debug cancelled - resuming normal operation")
-                    interval = 60
-                    current_loop_count = 0
+                    interval = 10
+                    current_loop_count = reporting_loop_count
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
                     lcd.write_string(' Debug Mode ')
@@ -257,13 +255,6 @@ while True:
                 # the ability to have a "last cleaned" timestamp on the dashboard as well. Once complete it will clear the maintenance
                 # indicators and revert to normal operation
                 if maintenance_mode_active :
-                    data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
-                    flowdata = Collect_Flow_Data()
-                    tempdata = Collect_Temp_Data()
-                    Publish_Data(flowdata, tempdata, data3)
-                    maintenance_interval = 0
-                    maintenance_mode_active = False
-                    data3 = ""
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
                     lcd.write_string(' Maintenance Mode ')
@@ -272,7 +263,7 @@ while True:
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
                     interval = 5
-                    current_loop_count = 0
+                    current_loop_count = reporting_loop_count
             
             # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
             if (GPIO.input(FILTER_SENSOR) == False) :
@@ -292,12 +283,31 @@ while True:
             interval = 60
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
-                lcd.clear
-                flowdata = Collect_Flow_Data()
-                tempdata = Collect_Temp_Data()
                 print('Reporting Loop - Data will be sent')
-                Publish_Data(flowdata, tempdata, data3)
-                current_loop_count = 0
+                if maintenance_mode_active :
+                    data3 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":{{\"Maintenance\":\"{0:.2f}\"}}}}'.format (maintenance_interval))
+                    maintenance_interval = 0
+                    maintenance_mode_active = False
+                    lcd.clear()
+                    flowdata = Collect_Flow_Data()
+                    tempdata = Collect_Temp_Data()
+                    Publish_Data(flowdata, tempdata, data3)
+                    current_loop_count = 0
+                elif debug == True :
+                    debug = False
+                    lcd.clear()
+                    flowdata = Collect_Flow_Data()
+                    tempdata = Collect_Temp_Data()
+                    Publish_Data(flowdata, tempdata, data3)
+                    current_loop_count = 0
+                else :
+                    lcd.clear()
+                    flowdata = Collect_Flow_Data()
+                    tempdata = Collect_Temp_Data()
+                    Publish_Data(flowdata, tempdata, data3)
+                    current_loop_count = 0
+
+                
                 
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = current_loop_count + 1
