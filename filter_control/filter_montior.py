@@ -249,6 +249,7 @@ while True:
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('{} minutes have passed'.format(maintenance_interval))
                     maintenance_interval = maintenance_interval + 1
+                    interval = 60
                     sleep(5)
             else :
                 # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the sensor data
@@ -270,7 +271,7 @@ while True:
                     lcd.write_string('-- Switch OFF --')
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
-                    interval = 60
+                    interval = 5
                     current_loop_count = 0
             
             # If maintenance mode is not activated the loop simply continues the countdown and updates the LCD
