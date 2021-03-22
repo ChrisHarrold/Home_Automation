@@ -244,7 +244,7 @@ while True:
                     lcd.cursor_pos = (2,0)
                     lcd.write_string('-- Switch ON --')
                     lcd.cursor_pos = (3,0)
-                    lcd.write_string('{} minutes have passed'.format(maintenance_interval))
+                    lcd.write_string('{} minutes elapsed'.format(maintenance_interval))
                     maintenance_interval = maintenance_interval + 1
                     interval = 60
                     sleep(5)
