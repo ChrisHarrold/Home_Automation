@@ -238,9 +238,9 @@ while True:
             if GPIO.input(maintenance_pin) :
                 # If maintenance mode has been activated, the unit will operate in this mode until the switch is flipped off again
                 # No data is collected during the maintenance interval (Maintenance assumes the filter is being cleaned out)
+                print("Switching to maintenance mode - no data collection will occur")
                 while GPIO.input(maintenance_pin) :
                     maintenance_mode_active = True
-                    print("Switching to maintenance mode - no data collection will occur")
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
                     lcd.write_string(' Maintenance Mode ')
@@ -292,6 +292,7 @@ while True:
             interval = 60
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                lcd.clear
                 flowdata = Collect_Flow_Data()
                 tempdata = Collect_Temp_Data()
                 print('Reporting Loop - Data will be sent')
