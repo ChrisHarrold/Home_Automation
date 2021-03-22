@@ -198,6 +198,7 @@ while True:
             # this will update the hub every 10 seconds
             if GPIO.input(debug_pin) :
                 debug = True
+                interval = 10
                 print("Debug enabled - data will be updated every 10 seconds")
                 lcd.clear()
                 lcd.cursor_pos = (0,0)
@@ -248,7 +249,7 @@ while True:
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('{} minutes have passed'.format(maintenance_interval))
                     maintenance_interval = maintenance_interval + 1
-                    sleep(60)
+                    sleep(5)
             else :
                 # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the sensor data
                 # add the information about how long the mmaintenance interval was, and publish to the dashboard host. This will give you
