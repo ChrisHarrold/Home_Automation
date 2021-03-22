@@ -149,7 +149,7 @@ def Collect_Temp_Data() :
             the_tempC.append(temp_temp_temp)
             the_tempF.append((temp_temp_temp * 1.8) + 32)
             i += 1
-            print('Sensor reading: {0} '.format (temp_temp_temp))
+            #print('Sensor reading: {0} '.format (temp_temp_temp))
         lcd.cursor_pos = (2,0)
         lcd.write_string('Temp {0:.2f}/{1:.2f}/{2:.2f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T3_C\":\"{2:.2f}\",\"T1_F\":\"{3:.2f}\",\"T2_F\":\"{4:.2f}\",\"T3_F\":\"{5:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1], the_tempC[2],the_tempF[0], the_tempF[1], the_tempF[2]))
@@ -252,7 +252,7 @@ while True:
                 # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the LCD
                 # and set the interval short and the reporting to "TRUE" This will give you
                 # the ability to have a "last cleaned" timestamp on the dashboard as well.
-                
+
                 if maintenance_mode_active :
                     lcd.clear()
                     lcd.cursor_pos = (0,0)
