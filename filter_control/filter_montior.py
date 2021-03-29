@@ -157,7 +157,6 @@ def Collect_Temp_Data() :
         lcd.cursor_pos = (2,0)
         lcd.write_string('{0:.1f}/{1:.1f}/{2:.1f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T3_C\":\"{2:.2f}\",\"T1_F\":\"{3:.2f}\",\"T2_F\":\"{4:.2f}\",\"T3_F\":\"{5:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1], the_tempC[2],the_tempF[0], the_tempF[1], the_tempF[2]))
-        print(data1)
         return data1
 
 def Publish_Data(fdata, tdata, mmdata):
