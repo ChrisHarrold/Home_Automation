@@ -219,7 +219,9 @@ while True:
                         GPIO.output(filter_alert_LED, 0)
                         filter_full = False
                     flowdata = Collect_Flow_Data()
+                    print(flowdata)
                     tempdata = Collect_Temp_Data()
+                    print(tempdata)
                     Publish_Data(flowdata, tempdata, data3) 
             
             else :
