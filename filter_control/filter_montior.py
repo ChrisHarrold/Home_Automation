@@ -133,19 +133,21 @@ def Collect_Flow_Data() :
         return data0
               
 def Collect_Temp_Data() :
-        # Get current out-flow water temperatures:
+        # Get current water temperatures:
         # the "library" that is included DOES perform these two steps BUT
         # only the FIRST TIME the sensor is initialized. In order to update the sensor
         # you need to run these two command again. I feel the way RPi does 1-Wire
         # is a major deficiency really. Having to shell to the OS is not ideal.
-        the_tempC = []
-        the_tempF = []
-        temp_temp_temp = 0
         os.system('modprobe w1-gpio')
         os.system('modprobe w1-therm')
         Temp_sensor_count = temp_sensor.device_count()
+
+        the_tempC = []
+        the_tempF = []
+        temp_temp_temp = 0
+        print(the_tempC[0])
         # initialize a quick counter for the temp sensors - this will read as many as there are
-        # but will only report out the first two readings to the LCD as it runs out of room for more
+        # but will only report out the first 3 readings to the LCD as it runs out of room for more
         i = 0
         while i < Temp_sensor_count:
             temp_temp_temp = (temp_sensor.tempC(i))
@@ -154,8 +156,9 @@ def Collect_Temp_Data() :
             i += 1
             #print('Sensor reading: {0} '.format (temp_temp_temp))
         lcd.cursor_pos = (2,0)
-        lcd.write_string('Temp {0:.2f}/{1:.2f}/{2:.2f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
+        lcd.write_string('{0:.1f}/{1:.1f}/{2:.1f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T3_C\":\"{2:.2f}\",\"T1_F\":\"{3:.2f}\",\"T2_F\":\"{4:.2f}\",\"T3_F\":\"{5:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1], the_tempC[2],the_tempF[0], the_tempF[1], the_tempF[2]))
+        print(the_tempC[0])
         return data1
 
 def Publish_Data(fdata, tdata, mmdata):
