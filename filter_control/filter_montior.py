@@ -223,7 +223,7 @@ while True:
                     tempdata = Collect_Temp_Data()
                     Publish_Data(flowdata, tempdata, data3)
                     lastcount1 = count1
-                    lastcount2 = count2 
+                    lastcount2 = count2
             
             else :
                 if debug == True :
