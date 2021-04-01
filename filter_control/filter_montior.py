@@ -221,7 +221,9 @@ while True:
                         filter_full = False
                     flowdata = Collect_Flow_Data()
                     tempdata = Collect_Temp_Data()
-                    Publish_Data(flowdata, tempdata, data3) 
+                    Publish_Data(flowdata, tempdata, data3)
+                    lastcount1 = count1
+                    lastcount2 = count2
             
             else :
                 if debug == True :
@@ -237,6 +239,8 @@ while True:
                     lcd.write_string('-- Switch OFF --')
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('Next Update:')
+                    lastcount1 = count1
+                    lastcount2 = count2
             
             if GPIO.input(maintenance_pin) :
                 # If maintenance mode has been activated, the unit will operate in this mode until the switch is flipped off again
