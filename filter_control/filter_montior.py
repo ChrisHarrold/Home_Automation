@@ -328,6 +328,8 @@ while True:
             lcd.write_string('{} '.format(interval))
             lastcount1 = count1
             lastcount2 = count2
+            count1 = 0
+            count2 = 0
 
     except KeyboardInterrupt:
         print('Keyboard Interrupt Detected - Breaking program. program sleeps for 20 seconds to notify via LCD.')
