@@ -10,7 +10,7 @@
 // Deep sleep taps out at 71 minutes, so for 4 hours you need to sleep
 // 1 hour, looped 4 times
 #define RTCMEMORYSTART 65
-#define MAXHOUR 4 // number of hours to deep sleep for
+#define MAXHOUR 2 // number of hours to deep sleep for
 typedef struct {
   int count;
 } rtcStore;
@@ -53,7 +53,7 @@ bool debug_mode = false;
 // declare our Wifi and MQTT connections and other constant settings for the network
 char* ssid     = "International_House_of_Corgi";            // The SSID (name) of the Wi-Fi network you want to connect to
 char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
-char* mqtt_server = "192.168.2.41";                             // The target mqtt server
+char* mqtt_server = "192.168.68.115";                             // The target mqtt server
 String clientId = "Pond_Temp";
 int lcount = 0;
 
