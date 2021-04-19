@@ -42,8 +42,8 @@ while True:
             interval = interval-1
         else:
             
-            flow1 = (count1/.33)
-            flow2 = (count2/.33)
+            flow1 = (count1/33)
+            flow2 = (count2/33)
 
             print('Flow Rate on tank 1 is: {0} Liters/Minute\n'.format (flow1))
             print('Flow Rate on tank 2 is: {0} Liters/Minute\n'.format (flow2))
