@@ -121,8 +121,8 @@ client = mqtt.Client("Filter_Monitor") #create new instance
 
 def Collect_Flow_Data() :
     # Get current LPM from flow meters:
-        flow1 = (count1/33)
-        flow2 = (count2/33)
+        flow1 = (count1/7.5)
+        flow2 = (count2/7.5)
         lcd.cursor_pos = (0,0)
         lcd.write_string('Flow 1 {0:.2f} LPM'.format (flow1))
         lcd.cursor_pos = (1,0)
