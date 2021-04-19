@@ -282,6 +282,9 @@ while True:
             else :
                 GPIO.output(filter_alert_LED, 0)
                 filter_full = False
+            lcd.clear()
+            flowdata = Collect_Flow_Data()
+            tempdata = Collect_Temp_Data()
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
