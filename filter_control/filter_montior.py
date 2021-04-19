@@ -148,6 +148,7 @@ def Collect_Temp_Data() :
         # initialize a quick counter for the temp sensors - this will read as many as there are
         # but will only report out the first 3 readings to the LCD as it runs out of room for more
         i = 0
+        print(Temp_sensor_count)
         while i < Temp_sensor_count:
             temp_temp_temp = (temp_sensor.tempC(i))
             the_tempC.append(temp_temp_temp)
