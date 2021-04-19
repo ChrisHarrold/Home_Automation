@@ -150,7 +150,11 @@ def Collect_Temp_Data() :
         i = 0
         print(Temp_sensor_count)
         while i < Temp_sensor_count:
-            temp_temp_temp = (temp_sensor.tempC(i))
+            try :
+                temp_temp_temp = (temp_sensor.tempC(i))
+            except IndexError :
+                temp_temp_temp = 100
+                
             the_tempC.append(temp_temp_temp)
             the_tempF.append((temp_temp_temp * 1.8) + 32)
             i += 1
