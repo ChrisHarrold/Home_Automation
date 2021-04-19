@@ -295,7 +295,6 @@ while True:
             lcd.write_string('{} '.format(interval))
             print(interval)
             interval = interval - 1
-            sleep(1)
         
         else :
             # Interval reset
