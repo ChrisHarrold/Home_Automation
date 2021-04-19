@@ -47,6 +47,8 @@ while True:
 
             print('Flow Rate on tank 1 is: {0} Liters/Minute\n'.format (flow1))
             print('Flow Rate on tank 2 is: {0} Liters/Minute\n'.format (flow2))
+            print(count1)
+            print(count2)
 
             count1 = 0
             count2 = 0
