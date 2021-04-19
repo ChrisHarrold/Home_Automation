@@ -293,6 +293,7 @@ while True:
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
+            print(interval)
             interval = interval - 1
             sleep(1)
         
