@@ -287,14 +287,11 @@ while True:
             else :
                 GPIO.output(filter_alert_LED, 0)
                 filter_full = False
-            lcd.clear()
-            flowdata = Collect_Flow_Data()
-            tempdata = Collect_Temp_Data()
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
-            print(interval)
             interval = interval - 1
+            sleep(1)
         
         else :
             # Interval reset
@@ -330,6 +327,9 @@ while True:
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = current_loop_count + 1
             print(current_loop_count)
+            lcd.clear()
+            flowdata = Collect_Flow_Data()
+            tempdata = Collect_Temp_Data()
             lcd.cursor_pos = (3,0)
             lcd.write_string('Next Update:')
             lcd.cursor_pos = (3,17)
