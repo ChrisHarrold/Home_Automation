@@ -52,7 +52,7 @@ class DS18B20:
 		while (lines[0].strip()[-3:] != 'YES') and (retries > 0):
 			# read failed so try again
 			time.sleep(0.1)
-			print('Read Failed', retries)
+			#print('Read Failed', retries)
 			lines = self._read_temp(index)
 			retries -= 1
 			
