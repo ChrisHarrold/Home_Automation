@@ -41,17 +41,13 @@ while True:
             time.sleep(1)
             interval = interval-1
         else:
-            current_count1 = count1 - lastcount1
-            current_count2 = count2 - lastcount2
             
-            flow1 = (current_count1/.55)
-            flow2 = (current_count2/.55)
+            flow1 = (count1/.55)
+            flow2 = (count2/.55)
 
             print('Flow Rate on tank 1 is: {0} Liters/Minute\n'.format (flow1))
             print('Flow Rate on tank 2 is: {0} Liters/Minute\n'.format (flow2))
 
-            lastcount1 = count1
-            lastcount2 = count2
             count1 = 0
             count2 = 0
             interval = 60
