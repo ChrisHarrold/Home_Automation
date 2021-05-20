@@ -16,12 +16,13 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
-    print("message received " ,str(msg.payload.decode("utf-8")))
+    payload = str(msg.payload.decode("utf-8")))
+    print("message received " ,payload)
     print("message topic=",msg.topic)
     print("message qos=",msg.qos)
     print("message retain flag=",msg.retain)
     
-    if (msg.payload == 'coop_close'):
+    if (payload == 'coop_close'):
         print("CLOSE!")
         # The door will close once I add the motor controlls here
         # it also needs to then reply with a message on the status of the door
@@ -35,7 +36,7 @@ def on_message(client, userdata, msg):
         # publish new door state message
         client.publish("Door_Status", "CLOSED")
 
-    elif (msg.payload == 'coop_open'):
+    elif (payload == 'coop_open'):
         print("OPEN!")
         # The door will open once I add the motor controls here
         # it also needs to then reply with a message on the status of the door
@@ -64,5 +65,6 @@ while True:
 
     except KeyboardInterrupt:
         client.disconnect()
+        client.loop_stop()
         sys.exit()
 
