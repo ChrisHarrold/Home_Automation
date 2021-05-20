@@ -19,9 +19,13 @@ def on_message(client, userdata, msg):
     
     if (msg.payload == 'coop_close'):
         print("CLOSE!")
+        # The door will close once I add the motor controlls here
+        # it also needs to then reply with a message on the status of the door
       
     elif (msg.payload == 'coop_open'):
         print("OPEN!")
+        # The door will open once I add the motor controls here
+        # it also needs to then reply with a message on the status of the door
 
 client.on_connect = on_connect
 client.on_message = on_message
@@ -37,7 +41,7 @@ while True:
         sleep(20)
         client.publish("Door_Status", "OPEN")
         sleep(20)
-        client.publish("Door_Status", "CLOSE")
+        client.publish("Door_Status", "CLOSED")
         sleep(20)
 
     except KeyboardInterrupt:
