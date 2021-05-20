@@ -37,7 +37,7 @@ while True:
         sleep(20)
         client.publish("Door_Status", "OPEN")
         sleep(20)
-        client.publish("Door_Status", "OPEN")
+        client.publish("Door_Status", "CLOSE")
         sleep(20)
 
     except KeyboardInterrupt:
