@@ -4,21 +4,18 @@ import paho.mqtt.client as mqtt
 from time import sleep
 
 #setup variables and values
-
 coop_cam1 = PiCamera()
 client = mqtt.Client()
-
-
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
-    print("message received " ,str(message.payload.decode("utf-8")))
-    print("message topic=",message.topic)
-    print("message qos=",message.qos)
-    print("message retain flag=",message.retain)
+    print("message received " ,str(msg.payload.decode("utf-8")))
+    print("message topic=",msg.topic)
+    print("message qos=",msg.qos)
+    print("message retain flag=",msg.retain)
     
     if (msg.payload == 'coop_close'):
         print("CLOSE!")
@@ -42,7 +39,7 @@ while True:
         sleep(20)
         client.publish("Door_Status", "OPEN")
         sleep(20)
-        
+
     except KeyboardInterrupt:
         client.disconnect()
         sys.exit()
