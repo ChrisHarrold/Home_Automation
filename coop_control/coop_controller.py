@@ -16,7 +16,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
-    payload = str(msg.payload.decode("utf-8")))
+    payload = str(msg.payload.decode("utf-8"))
     print("message received " ,payload)
     print("message topic=",msg.topic)
     print("message qos=",msg.qos)
