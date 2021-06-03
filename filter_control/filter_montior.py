@@ -186,8 +186,6 @@ def Publish_Data(fdata, tdata, mmdata):
     client.disconnect()
     print('Data Published')
 
-
-
 # Here is the actual program:
 while True:
     try:

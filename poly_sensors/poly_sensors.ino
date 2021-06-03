@@ -53,8 +53,8 @@ bool debug_mode = false;
 // declare our Wifi and MQTT connections and other constant settings for the network
 char* ssid     = "International_House_of_Corgi";            // The SSID (name) of the Wi-Fi network you want to connect to
 char* password = "ElwoodIsBigAndFat";                          // The password of the Wi-Fi network
-char* mqtt_server = "192.168.2.41";                             // The target mqtt server
-String clientId = "Poly_Temp";
+char* mqtt_server = "192.168.68.115";                             // The target mqtt server
+String clientId = "Poly_Tunnel";
 int lcount = 0;
 
 // declare our Wifi and MQTT connections
