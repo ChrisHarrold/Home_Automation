@@ -257,8 +257,7 @@ while True:
                     lcd.cursor_pos = (3,0)
                     lcd.write_string('{} minutes elapsed'.format(maintenance_interval))
                     maintenance_interval = maintenance_interval + 1
-                    interval = 60
-                    sleep(5)
+                    sleep(60)
             else :
                 # if maintenance mode WAS active (by switching on the switch), but is now "OFF" the program will update the LCD
                 # and set the interval short and the reporting to "TRUE" This will give you
