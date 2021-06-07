@@ -1,37 +1,42 @@
-/* Interface L298N With NodeMCU
- * By TheCircuit
- */
+#include <time.h>
 
-//int ENA = 3; //4;
-int IN1 = 3; //0;
-int IN2 = 2; //2;
+int IN1 = 5;
+int IN2 = 4;
 
 void setup() {
 // set all the motor control pins to outputs
-//pinMode(ENA, OUTPUT);
+Serial.begin(9600);
 pinMode(IN1, OUTPUT);
 pinMode(IN2, OUTPUT);
+digitalWrite(IN1, LOW);
+digitalWrite(IN2, LOW);
 }
 
-// this function will run the motors in both directions at a fixed speed
 
 void doorUp() {
+  Serial.println("Door Up");
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   delay(5000); // let motor run for 5 seconds
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
+  Serial.println("Done Door Up");
 }
 
 void doorDown() {
+  Serial.println("Door Down");
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, HIGH);
   delay(5000); // let motor run for 5 seconds
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
+  Serial.println("Done Door Down");
 }
 
 void loop() {
-  testOne();   
-  delay(1000);   
+  Serial.println("Starting Up");
+  delay(5000);
+  doorUp();   
+  delay(5000);
+  doorDown();   
 }
