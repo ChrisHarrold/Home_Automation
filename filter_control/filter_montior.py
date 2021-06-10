@@ -181,6 +181,7 @@ def Publish_Data(fdata, tdata, mmdata):
             sleep(5)
         except Exception as e:
             err = e
+            sleep(60)
             continue
         # no exception, continue remainder of code
         else:
