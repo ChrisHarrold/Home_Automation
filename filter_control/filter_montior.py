@@ -173,18 +173,40 @@ def Publish_Data(fdata, tdata, mmdata):
         GPIO.output(filter_alert_LED, 0)
         filter_full = False
     data2 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
+    
+    err = ""
+    for _ in range(5):
+        try:
+            client.connect(broker_address) #connect to broker
+            sleep(5)
+        except Exception as e:
+            err = e
+            continue
+        # no exception, continue remainder of code
+        else:
+            break
+    # did not break the for loop, therefore all attempts
+    # raised an exception
+    else:
+        raise err
+    
+    if (err == ""):
+        client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
+        client.publish("Pond", fdata)
+        client.publish("Pond", tdata)
+        client.publish("Pond", data2)
+        if maintenance_mode_active :
+            client.publish("Pond", mmdata)
+        client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
         
-    client.connect(broker_address) #connect to broker
-    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Connected\"}')  
-    client.publish("Pond", fdata)
-    client.publish("Pond", tdata)
-    client.publish("Pond", data2)
-    if maintenance_mode_active :
-        client.publish("Pond", mmdata)
-    client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
-    sleep(1)
-    client.disconnect()
-    print('Data Published')
+        sleep(10)
+        
+        client.disconnect()
+        print('Data Published')
+    else:
+        print('Client did not connect!\n')
+        print ('The error was' + err)
+    
 
 # Here is the actual program:
 while True:
