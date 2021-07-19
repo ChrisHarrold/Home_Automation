@@ -196,8 +196,9 @@ def Publish_Data(fdata, tdata, mmdata):
         client.publish("Pond", fdata)
         client.publish("Pond", tdata)
         client.publish("Pond", data2)
-        if maintenance_mode_active :
+        if (mmdata != "") :
             client.publish("Pond", mmdata)
+
         client.publish("control", '{\"Unit\":\"Filter\", \"MQTT\":\"Disconnecting\"}')
         
         sleep(10)
@@ -324,6 +325,7 @@ while True:
                     flowdata = Collect_Flow_Data()
                     tempdata = Collect_Temp_Data()
                     Publish_Data(flowdata, tempdata, data3)
+                    data3 = ""
                     current_loop_count = 0
                     mreport = False
                 elif dreport :
