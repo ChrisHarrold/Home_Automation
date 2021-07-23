@@ -10,9 +10,13 @@ coop_cam1 = PiCamera()
 client = mqtt.Client()
 
 # these are the pins that interface to the L298N driver board 
-# and tell it which way to spin
-openPin = 5
-closePin = 6
+# and tell it which way to spin - motor 1 controls the coop door
+# itself and motor 2 will eventually control the vent for heat control
+
+openPin1 = 5
+closePin1 = 6
+openPin2 = 200
+closePin2 = 201
 active_running_led = 13
 
 
@@ -39,11 +43,11 @@ def on_message(client, userdata, msg):
         # it also needs to then reply with a message on the status of the door
 
         # turn on CLOSE pin
-        GPIO.output(closePin, 1)
+        GPIO.output(closePin1, 1)
         # sleep long enough to open door (some number of seconds)
         sleep(10)
         # turn off close pin
-        GPIO.output(closePin, 0)
+        GPIO.output(closePin1, 0)
         # publish new door state message
         client.publish("Door_Status", "CLOSED")
 
@@ -53,11 +57,11 @@ def on_message(client, userdata, msg):
         # it also needs to then reply with a message on the status of the door
 
         # turn on OPEN pin
-        GPIO.output(openPin, 1)
+        GPIO.output(openPin1, 1)
         # sleep long enough to open door (some number of seconds)
         sleep(10)
         # turn off open pin
-        GPIO.output(openPin, 0)
+        GPIO.output(openPin1, 0)
         # publish new door state message
         client.publish("Door_Status", "OPEN")
 
