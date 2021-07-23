@@ -22,8 +22,10 @@ active_running_led = 13
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(active_running_led, GPIO.OUT, initial=1)
-GPIO.setup(openPin, GPIO.OUT)
-GPIO.setup(closePin, GPIO.OUT)
+GPIO.setup(openPin1, GPIO.OUT)
+GPIO.setup(closePin1, GPIO.OUT)
+#GPIO.setup(openPin2, GPIO.OUT)
+#GPIO.setup(closePin2, GPIO.OUT)
 
 
 def on_connect(client, userdata, flags, rc):
@@ -81,7 +83,7 @@ while True:
         coop_cam1.capture('/var/www/html/coop_pic.jpg')
         print("took a pic!")
         publish_message("'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
-        sleep(20)
+        sleep(60)
 
     except KeyboardInterrupt:
         client.disconnect()
