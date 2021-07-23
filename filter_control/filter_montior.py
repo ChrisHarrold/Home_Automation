@@ -52,7 +52,7 @@ flow1 = 0
 flow2 = 0
 maintenance_mode_active = False
 maintenance_interval = 0
-data3 =""
+data3 = ""
 
 # values to initialise the LCD
 # -------------------------------------------------------------------

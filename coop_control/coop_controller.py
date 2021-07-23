@@ -9,7 +9,8 @@ from ds18b20 import DS18B20
 coop_cam1 = PiCamera()
 client = mqtt.Client()
 
-# these are the pins that interface to the L298N driver board and tell it which way to spin
+# these are the pins that interface to the L298N driver board 
+# and tell it which way to spin
 openPin = 5
 closePin = 6
 active_running_led = 13
@@ -60,6 +61,10 @@ def on_message(client, userdata, msg):
         # publish new door state message
         client.publish("Door_Status", "OPEN")
 
+def publish_message(the_message):
+    client.publish("Coop_Picture", the_message)
+
+
 client.on_connect = on_connect
 client.on_message = on_message
 #this device is going to be "always on" and needs to
@@ -71,6 +76,7 @@ while True:
     try:
         coop_cam1.capture('/var/www/html/coop_pic.jpg')
         print("took a pic!")
+        publish_message("'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
         sleep(20)
 
     except KeyboardInterrupt:
