@@ -9,7 +9,8 @@ GPIO.setup(lightPin, GPIO.IN)
 
 while True:
     try :
-        if (lightPin == GPIO.HIGH) :
+        state = GPIO.input(lightPin)
+        if (state is True) :
             print("It is not dark")
         else :
             print("DARK")
