@@ -21,7 +21,7 @@ closePin2 = 201
 active_running_led = 26
 temp_sensor = DS18B20()
 lightPin = 24
-maintenance_pin = 25
+maintenance_pin = 12
 first_run = True
 
 
