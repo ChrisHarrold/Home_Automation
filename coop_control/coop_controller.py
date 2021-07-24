@@ -13,13 +13,16 @@ client = mqtt.Client()
 # and tell it which way to spin - motor 1 controls the coop door
 # itself and motor 2 will eventually control the vent for heat control
 
+i = 1
 openPin1 = 5
 closePin1 = 6
 openPin2 = 200
 closePin2 = 201
-active_running_led = 25
+active_running_led = 26
 temp_sensor = DS18B20()
 lightPin = 24
+maintenance_pin = 25
+first_run = True
 
 
 
@@ -125,10 +128,23 @@ def Collect_Temp_Data() :
         data1 = ""
         return
 
-def take_picture():
+def Take_Picture():
     coop_cam1.capture('/var/www/html/coop_pic.jpg')
     print("took a pic!")
     publish_message("Coop_Picture", "'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
+    return
+
+def Check_Maintenance() :
+    state = GPIO.input(maintenance_pin)
+    mdata = ""
+    if (state == True) :
+        mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
+        publish_message("Coop_Sensors", mdata)
+        while state :
+            sleep(30)
+            state = GPIO.input(maintenance_pin)
+        mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
+        publish_message("Coop_Sensors", mdata)
     return
 
 client.on_connect = on_connect
@@ -140,10 +156,31 @@ client.loop_start()
 
 while True:
     try:
-        take_picture()
-        Collect_Temp_Data()
-        Light_Check()
-        sleep(60)
+        if first_run :
+            # on the first run the program does the key checks immediately
+            # helps with debugging on the Node Red side
+            Take_Picture()
+            Collect_Temp_Data()
+            Light_Check()
+            first_run = False
+
+        i = i+1 #simple incrementer for the 60 second sleep cycle
+
+        if (i < 60):
+            # if this is not the enxt minute, only check the maintenance switch
+            # then carry on to sleep for one second
+            Check_Maintenance()
+        
+        else :
+            # if one minute has passed, carry out all checks
+            # (photo - Temp - Light level - and Maintenance switch)
+            Check_Maintenance()
+            Take_Picture()
+            Collect_Temp_Data()
+            Light_Check()
+            i = 1 #reset the incrementer to restart the loop
+        
+        sleep(1)
 
     except KeyboardInterrupt:
         client.disconnect()
