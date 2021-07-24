@@ -12,7 +12,7 @@ while i < 100 :
     print("LED on")
     time.sleep(5)
     print("LED off")
-    GPIO.output(blink_me),GPIO.LOW)
+    GPIO.output(blink_me,GPIO.LOW)
     i=i+1
 
 
