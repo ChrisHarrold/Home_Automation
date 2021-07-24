@@ -168,6 +168,7 @@ while True:
         i = i+1 #simple incrementer for the 60 second sleep cycle
 
         if (i < 60):
+            print(i)
             # if this is not the enxt minute, only check the maintenance switch
             # then carry on to sleep for one second
             Check_Maintenance()
