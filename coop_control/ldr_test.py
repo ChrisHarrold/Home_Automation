@@ -2,7 +2,7 @@ from time import sleep
 import RPi.GPIO as GPIO
 import sys
 
-lightPin = 17
+lightPin = 24
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(lightPin, GPIO.IN)
