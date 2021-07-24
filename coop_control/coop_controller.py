@@ -79,10 +79,10 @@ def Light_Check() :
     ldata = ""
     
     if (state == True) :
-        ldata = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"DO NOT CLOSE"}}')
+        ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"DO NOT CLOSE"}')
         publish_message("Coop_Sensors", ldata)
     else :
-        ldata = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"READY TO CLOSE"}}')
+        ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"READY TO CLOSE"}')
         publish_message("Coop_Sensors", ldata)
 
 def Collect_Temp_Data() :
@@ -117,7 +117,7 @@ def Collect_Temp_Data() :
         if i > 0 :
             data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T1_F\":\"{1:.2f}\"}}}}'.format (the_tempC[0], the_tempF[0]))
         else :
-            data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":\"NO DATA\"}}')
+            data1 = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":\"NO DATA\"}')
         
         publish_message("Coop_Sensors", data1)
         data1 = ""
