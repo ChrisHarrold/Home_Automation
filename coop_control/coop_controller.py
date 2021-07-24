@@ -17,19 +17,21 @@ openPin1 = 5
 closePin1 = 6
 openPin2 = 200
 closePin2 = 201
-active_running_led = 13
+active_running_led = 25
 temp_sensor = DS18B20()
 lightPin = 24
 
 
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(active_running_led, GPIO.OUT, initial=1)
+GPIO.setup(active_running_led, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
 #GPIO.setup(closePin2, GPIO.OUT)
+
+GPIO.output(active_running_led, 1)
 
 
 def on_connect(client, userdata, flags, rc):
