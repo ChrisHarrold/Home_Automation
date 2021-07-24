@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-blink_me = 25
+blink_me = 26
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(blink_me, GPIO.OUT)
