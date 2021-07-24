@@ -19,10 +19,13 @@ openPin2 = 200
 closePin2 = 201
 active_running_led = 13
 temp_sensor = DS18B20()
+lightPin = 24
+
 
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(active_running_led, GPIO.OUT, initial=1)
+GPIO.setup(lightPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
@@ -70,6 +73,13 @@ def on_message(client, userdata, msg):
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
+
+def Light_Check() :
+    state = GPIO.input(lightPin)
+        if (state == True) :
+            print("It is not dark")
+        else :
+            print("DARK")
 
 def Collect_Temp_Data() :
         # Get current water temperatures:
