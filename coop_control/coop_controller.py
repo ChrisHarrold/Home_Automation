@@ -110,7 +110,11 @@ def Collect_Temp_Data() :
             #print('Sensor reading: {0} '.format (temp_temp_temp))
         #lcd.cursor_pos = (2,0)
         #lcd.write_string('{0:.1f}'.format (the_tempC[0]))
-        data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T1_F\":\"{3:.2f}\"}}'.format (the_tempC[0], the_tempF[0]))
+        if i > 0 :
+            data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T1_F\":\"{3:.2f}\"}}'.format (the_tempC[0], the_tempF[0]))
+        else :
+            data1 = ('\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":\"NO DATA\"')
+        
         publish_message("Coop_Sensors", data1)
         return
 
