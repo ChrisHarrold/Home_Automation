@@ -137,10 +137,12 @@ def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
     mdata = ""
     if (state == True) :
+        print("Maintenance Mode Detected")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
         publish_message("Coop_Sensors", mdata)
         while state :
-            sleep(30)
+            sleep(10)
+            print("Still In maintenance mode")
             state = GPIO.input(maintenance_pin)
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
         publish_message("Coop_Sensors", mdata)
