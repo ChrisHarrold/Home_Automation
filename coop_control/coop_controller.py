@@ -77,9 +77,9 @@ def publish_message(the_topic, the_message):
 def Light_Check() :
     state = GPIO.input(lightPin)
     if (state == True) :
-        publish_message("Coop_Sensors", '{{\"Unit\":\"Coop\", \"Sensor\":\"Coop_Light\", \"Value\":\"DO NOT CLOSE\"}}')
+        publish_message("Coop_Sensors", '\"Unit\":\"Coop\", \"Sensor\":\"Coop_Light\", \"Value\":\"DO NOT CLOSE\"')
     else :
-        publish_message("Coop_Sensors", '{{\"Unit\":\"Coop\", \"Sensor\":\"Coop_Light\", \"Value\":\"READY TO CLOSE\"}}')
+        publish_message("Coop_Sensors", '\"Unit\":\"Coop\", \"Sensor\":\"Coop_Light\", \"Value\":\"READY TO CLOSE\"')
 
 def Collect_Temp_Data() :
         # Get current water temperatures:
