@@ -29,6 +29,7 @@ first_run = True
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(active_running_led, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(maintenance_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
