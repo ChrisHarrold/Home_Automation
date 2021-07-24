@@ -24,8 +24,6 @@ lightPin = 24
 maintenance_pin = 12
 first_run = True
 
-
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(active_running_led, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -35,8 +33,8 @@ GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
 #GPIO.setup(closePin2, GPIO.OUT)
 
+# turn on status LED
 GPIO.output(active_running_led, 1)
-
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
