@@ -1,5 +1,6 @@
 from time import sleep
 import RPi.GPIO as GPIO
+import sys
 
 lightPin = 17
 
