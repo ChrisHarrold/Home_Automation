@@ -5,7 +5,7 @@ import sys
 lightPin = 24
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(lightPin, GPIO.IN)
+GPIO.setup(lightPin, GPIO.IN pull_up_down=GPIO.PUD_DOWN)
 
 while True:
     try :
