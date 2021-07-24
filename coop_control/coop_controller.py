@@ -18,6 +18,7 @@ closePin1 = 6
 openPin2 = 200
 closePin2 = 201
 active_running_led = 13
+temp_sensor = DS18B20()
 
 
 GPIO.setmode(GPIO.BCM)
@@ -67,9 +68,47 @@ def on_message(client, userdata, msg):
         # publish new door state message
         client.publish("Door_Status", "OPEN")
 
-def publish_message(the_message):
-    client.publish("Coop_Picture", the_message)
+def publish_message(the_topic, the_message):
+    client.publish(the_topic, the_message)
 
+def Collect_Temp_Data() :
+        # Get current water temperatures:
+        # the "library" that is included DOES perform these two steps BUT
+        # only the FIRST TIME the sensor is initialized. In order to update the sensor
+        # you need to run these two command again. I feel the way RPi does 1-Wire
+        # is a major deficiency really. Having to shell to the OS is not ideal.
+        os.system('modprobe w1-gpio')
+        os.system('modprobe w1-therm')
+        Temp_sensor_count = temp_sensor.device_count()
+
+        the_tempC = []
+        the_tempF = []
+        temp_temp_temp = 0
+        # initialize a quick counter for the temp sensors - this will read as many as there are
+        # but will only report out the first reading as is - can be extended to handle more
+        i = 0
+        #print(Temp_sensor_count)
+        while i < Temp_sensor_count:
+            try :
+                temp_temp_temp = (temp_sensor.tempC(i))
+            except IndexError :
+                temp_temp_temp = 100
+
+            the_tempC.append(temp_temp_temp)
+            the_tempF.append((temp_temp_temp * 1.8) + 32)
+            i += 1
+            #print('Sensor reading: {0} '.format (temp_temp_temp))
+        #lcd.cursor_pos = (2,0)
+        #lcd.write_string('{0:.1f}'.format (the_tempC[0]))
+        data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T1_F\":\"{3:.2f}\"}}'.format (the_tempC[0], the_tempF[0]))
+        publish_message("Coop_Sensors", data1)
+        return
+
+def take_picture():
+    coop_cam1.capture('/var/www/html/coop_pic.jpg')
+    print("took a pic!")
+    publish_message("Coop_Picture", "'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
+    return
 
 client.on_connect = on_connect
 client.on_message = on_message
@@ -80,9 +119,8 @@ client.loop_start()
 
 while True:
     try:
-        coop_cam1.capture('/var/www/html/coop_pic.jpg')
-        print("took a pic!")
-        publish_message("'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
+        take_picture()
+        Collect_Temp_Data()
         sleep(60)
 
     except KeyboardInterrupt:
