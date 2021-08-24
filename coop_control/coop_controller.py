@@ -186,7 +186,7 @@ def Check_Maintenance() :
     return
 
 client.on_connect = on_connect
-client.on_message = on_message(door_state)
+client.on_message = on_message
 #this device is going to be "always on" and needs to
 #be listening at all times to function so connect immediately
 client.connect("192.168.68.115",1883,60)
