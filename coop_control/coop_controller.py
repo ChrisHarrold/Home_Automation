@@ -91,7 +91,7 @@ def on_message(client, userdata, msg):
             #state mismatch detected - raise alarm for manual check
             client.publish("Door_Status", "ALARM")
 
-    elif (payload == 'coop_open'):
+    if (payload == 'coop_open'):
         if (door_state == 'CLOSED') :
             # The door will open once I add the motor controls here
             # it also needs to then reply with a message on the status of the door
@@ -112,15 +112,29 @@ def on_message(client, userdata, msg):
             #state mismatch detected - raise alarm for manual check
             client.publish("Door_Status", "ALARM")
 
+    if (payload == 'check_door') :
+        with open('/tmp/doorstate.txt', "r") as f:
+            str_door_temp = f.read()
+            if ('CLOSED' in str_door_temp) :
+                door_data = ('{\"Unit\":\"Coop\",\"Sensor\":\"Door_State\",\"Values\":\"CLOSED"}')
+                publish_message("Coop_Sensors", door_data)
+            elif ('OPEN' in str_door_temp) :
+                door_data = ('{\"Unit\":\"Coop\",\"Sensor\":\"Door_State\",\"Values\":\"OPEN"}')
+                publish_message("Coop_Sensors", door_data)
+            f.close
+        
+
+
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
 
 def Light_Check() :
+    # checek the daylight sensor to see if we should close the coop
+    # chickens mostly go in only when it is dark enough
     state = GPIO.input(lightPin)
     ldata = ""
-    
     if (state == True) :
-        ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"DO NOT CLOSE"}')
+        c
         publish_message("Coop_Sensors", ldata)
     else :
         ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"READY TO CLOSE"}')
@@ -185,13 +199,17 @@ def Check_Maintenance() :
         publish_message("Coop_Sensors", mdata)
     return
 
-client.on_connect = on_connect
-client.on_message = on_message
+# Here is where the actual meat of the program starts and enters the "always on" loop
+
 #this device is going to be "always on" and needs to
 #be listening at all times to function so connect immediately
+# this defines the interrupts and sets up the eternal listening loop
+client.on_connect = on_connect
+client.on_message = on_message
 client.connect("192.168.68.115",1883,60)
 client.loop_start()
 
+# run forever:
 while True:
     try:
         if first_run :
