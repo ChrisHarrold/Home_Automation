@@ -254,6 +254,7 @@ GPIO.output(active_running_led, 1)
 while True:
     try:
         if first_run :
+            print("First Run")
             # on the first run the program does the key checks immediately
             # helps with debugging on the Node Red side
             Take_Picture()
