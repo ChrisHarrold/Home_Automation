@@ -70,7 +70,7 @@ def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("Door_Actions")
 
-def on_message(client, msg):
+def on_message(client, userdata, msg):
     payload = str(msg.payload.decode("utf-8"))
 
     if (payload == 'coop_close'):
