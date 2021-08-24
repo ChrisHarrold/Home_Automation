@@ -122,8 +122,6 @@ def on_message(client, userdata, msg):
                 door_data = ('{\"Unit\":\"Coop\",\"Sensor\":\"Door_State\",\"Values\":\"OPEN"}')
                 publish_message("Coop_Sensors", door_data)
             f.close
-        
-
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
@@ -134,7 +132,7 @@ def Light_Check() :
     state = GPIO.input(lightPin)
     ldata = ""
     if (state == True) :
-        c
+        ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"DO NOT CLOSE"}')
         publish_message("Coop_Sensors", ldata)
     else :
         ldata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Light\",\"Values\":\"READY TO CLOSE"}')
