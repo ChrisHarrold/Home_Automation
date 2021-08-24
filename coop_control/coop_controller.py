@@ -16,9 +16,9 @@ i = 1
 openPin1 = 5
 closePin1 = 6
 maintenance_pin = 12
-manual_toggle_1 = 16
+door_toggle = 16
 openPin2 = 22
-manual_toggle_2 =  25
+vent_toggle =  25
 lightPin = 24
 active_running_led = 26
 closePin2 = 27
@@ -36,10 +36,10 @@ GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
 #GPIO.setup(closePin2, GPIO.OUT)
-GPIO.setup(manual_toggle_1, GPIO.IN)
-GPIO.setup(manual_toggle_2, GPIO.IN)
+GPIO.setup(manual_toggle_1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(manual_toggle_2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-# get last known door and vent values:
+# get last known local door and vent values:
 try :
     with open('/tmp/doorstate.txt', "r") as f:
         str_door_temp = f.read()
@@ -56,15 +56,51 @@ try :
 except FileNotFoundError:
     # the file was not found so this is 100% the very first run
     # ever and we need to create the file. The door must be OPEN
-    # at installation for this to work
+    # at installation for this to work and NodeRed needs to be in sync
+    # this is unlikely to ever be needed, but I am the king of handling
+    # corner cases so why sstop now!?
     door_state = 'OPEN'
     with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
         f.close
 
+def door_button_press_callback():
+    # manual override button on the controller activates a close or open toggle
+    # deppending on the current door state
+    global door_state
+    if (door_state == 'OPEN') :
+        # turn on CLOSE pin
+        GPIO.output(closePin1, 1)
+        # sleep long enough to close door (some number of seconds - needs testing)
+        sleep(10)
+        # turn off close pin
+        GPIO.output(closePin1, 0)
+        #update to new door state
+        door_state = 'CLOSED'
+        with open('/tmp/doorstate.txt', "w") as f:
+            f.write(door_state)
+            f.close
+        # publish new door state message to NodeRed
+        client.publish("Door_Status", "CLOSED")
+    
+    else :
+        # turn on OPEN pin
+            GPIO.output(openPin1, 1)
+            # sleep long enough to open door (some number of seconds)
+            sleep(10)
+            # turn off open pin
+            GPIO.output(openPin1, 0)
+            #update to new door state
+            door_state = 'OPEN'
+            with open('/tmp/doorstate.txt', "w") as f:
+                f.write(door_state)
+                f.close
+            # publish new door state message to NodeRed
+            client.publish("Door_Status", "OPEN")
 
-# turn on status LED after priming the system
-GPIO.output(active_running_led, 1)
+
+def vent_button_press_callback():
+    print("vent change!")
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
@@ -81,11 +117,12 @@ def on_message(client, userdata, msg):
             sleep(10)
             # turn off close pin
             GPIO.output(closePin1, 0)
+            #update the new state of the door:
             door_state = 'CLOSED'
             with open('/tmp/doorstate.txt', "w") as f:
                 f.write(door_state)
                 f.close
-        # publish new door state message
+            # publish new door state message
             client.publish("Door_Status", "CLOSED")
         else :
             #state mismatch detected - raise alarm for manual check
@@ -93,15 +130,13 @@ def on_message(client, userdata, msg):
 
     if (payload == 'coop_open'):
         if (door_state == 'CLOSED') :
-            # The door will open once I add the motor controls here
-            # it also needs to then reply with a message on the status of the door
-
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # sleep long enough to open door (some number of seconds)
             sleep(10)
             # turn off open pin
             GPIO.output(openPin1, 0)
+            #update the new state of the door:
             door_state = 'OPEN'
             with open('/tmp/doorstate.txt', "w") as f:
                 f.write(door_state)
@@ -110,9 +145,12 @@ def on_message(client, userdata, msg):
             client.publish("Door_Status", "OPEN")
         else :
             #state mismatch detected - raise alarm for manual check
+            #it should be REALLY hard to get to this state
             client.publish("Door_Status", "ALARM")
 
     if (payload == 'check_door') :
+        # this allows a quick sanity checek via node red to ensure the state on the controller matches the state
+        # on the dashboard
         with open('/tmp/doorstate.txt', "r") as f:
             str_door_temp = f.read()
             if ('CLOSED' in str_door_temp) :
@@ -178,7 +216,7 @@ def Collect_Temp_Data() :
 
 def Take_Picture():
     coop_cam1.capture('/var/www/html/coop_pic.jpg')
-    print("took a pic!")
+    #print("took a pic!")
     publish_message("Coop_Picture", "'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
     return
 
@@ -197,15 +235,20 @@ def Check_Maintenance() :
         publish_message("Coop_Sensors", mdata)
     return
 
-# Here is where the actual meat of the program starts and enters the "always on" loop
 
-#this device is going to be "always on" and needs to
-#be listening at all times to function so connect immediately
+# Here is where the actual meat of the program starts and enters the "always on" loop
+# this device is going to be "always on" and needs to
+# be listening at all times to function so connect immediately
 # this defines the interrupts and sets up the eternal listening loop
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect("192.168.68.115",1883,60)
 client.loop_start()
+GPIO.add_event_detect(door_toggle, GPIO.RISING, callback=door_button_press_callback, bouncetime=200)
+GPIO.add_event_detect(vent_toggle, GPIO.RISING, callback=vent_button_press_callback, bouncetime=200)
+
+# turn on status LED after priming the system
+GPIO.output(active_running_led, 1)
 
 # run forever:
 while True:
