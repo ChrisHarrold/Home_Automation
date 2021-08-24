@@ -36,8 +36,8 @@ GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
 #GPIO.setup(closePin2, GPIO.OUT)
-GPIO.setup(manual_toggle_1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(manual_toggle_2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(door_toggle, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(vent_toggle, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # get last known local door and vent values:
 try :
