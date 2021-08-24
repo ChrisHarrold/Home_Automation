@@ -53,7 +53,7 @@ try :
         f.write(door_state)
         f.close
     
-except OSError(FileNotFoundError):
+except FileNotFoundError:
     # the file was not found so this is 100% the very first run
     # ever and we need to create the file. The door must be OPEN
     # at installation for this to work
