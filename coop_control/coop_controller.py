@@ -9,21 +9,25 @@ from ds18b20 import DS18B20
 coop_cam1 = PiCamera()
 client = mqtt.Client()
 
-# these are the pins that interface to the L298N driver board 
-# and tell it which way to spin - motor 1 controls the coop door
-# itself and motor 2 will eventually control the vent for heat control
-
+# I have taken to numbering pins in order so I can see what GPIO
+# I am using at a glance. This keeps me from adding functions and duplicating
+# a pin!
 i = 1
 openPin1 = 5
 closePin1 = 6
-openPin2 = 200
-closePin2 = 201
-active_running_led = 26
-temp_sensor = DS18B20()
-lightPin = 24
 maintenance_pin = 12
+manual_toggle_1 = 16
+openPin2 = 22
+manual_toggle_2 =  25
+lightPin = 24
+active_running_led = 26
+closePin2 = 27
+temp_sensor = DS18B20()
 first_run = True
+door_state = ""
+vent_state = ""
 
+#set all pins to startup modes:
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(active_running_led, GPIO.OUT)
 GPIO.setup(lightPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -32,48 +36,81 @@ GPIO.setup(openPin1, GPIO.OUT)
 GPIO.setup(closePin1, GPIO.OUT)
 #GPIO.setup(openPin2, GPIO.OUT)
 #GPIO.setup(closePin2, GPIO.OUT)
+GPIO.setup(manual_toggle_1, GPIO.IN)
+GPIO.setup(manual_toggle_2, GPIO.IN)
 
-# turn on status LED
+# get last known door and vent values:
+try :
+    with open('/tmp/doorstate.txt', "r") as f:
+        str_door_temp = f.read()
+        if ('CLOSED' in str_door_temp) :
+            door_state = 'CLOSED'
+        elif ('OPEN' in str_door_temp) :
+            door_state = 'OPEN'
+        f.close
+    sleep(1)
+    with open('/tmp/doorstate.txt', "w") as f:
+        f.write(door_state)
+        f.close
+    
+except OSError(FileNotFoundError):
+    # the file was not found so this is 100% the very first run
+    # ever and we need to create the file. The door must be OPEN
+    # at installation for this to work
+    door_state = 'OPEN'
+    with open('/tmp/doorstate.txt', "w") as f:
+        f.write(door_state)
+        f.close
+
+
+# turn on status LED after priming the system
 GPIO.output(active_running_led, 1)
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     client.subscribe("Door_Actions")
 
-def on_message(client, userdata, msg):
+def on_message(client, msg):
     payload = str(msg.payload.decode("utf-8"))
-    #print("message received " ,payload)
-    #print("message topic=",msg.topic)
-    #print("message qos=",msg.qos)
-    #print("message retain flag=",msg.retain)
-    
-    if (payload == 'coop_close'):
-        print("CLOSE!")
-        # The door will close once I add the motor controlls here
-        # it also needs to then reply with a message on the status of the door
 
-        # turn on CLOSE pin
-        GPIO.output(closePin1, 1)
-        # sleep long enough to open door (some number of seconds)
-        sleep(10)
-        # turn off close pin
-        GPIO.output(closePin1, 0)
+    if (payload == 'coop_close'):
+        if (door_state == 'OPEN') :
+            # turn on CLOSE pin
+            GPIO.output(closePin1, 1)
+            # sleep long enough to open door (some number of seconds - needs testing)
+            sleep(10)
+            # turn off close pin
+            GPIO.output(closePin1, 0)
+            door_state = 'CLOSED'
+            with open('/tmp/doorstate.txt', "w") as f:
+                f.write(door_state)
+                f.close
         # publish new door state message
-        client.publish("Door_Status", "CLOSED")
+            client.publish("Door_Status", "CLOSED")
+        else :
+            #state mismatch detected - raise alarm for manual check
+            client.publish("Door_Status", "ALARM")
 
     elif (payload == 'coop_open'):
-        print("OPEN!")
-        # The door will open once I add the motor controls here
-        # it also needs to then reply with a message on the status of the door
+        if (door_state == 'CLOSED') :
+            # The door will open once I add the motor controls here
+            # it also needs to then reply with a message on the status of the door
 
-        # turn on OPEN pin
-        GPIO.output(openPin1, 1)
-        # sleep long enough to open door (some number of seconds)
-        sleep(10)
-        # turn off open pin
-        GPIO.output(openPin1, 0)
-        # publish new door state message
-        client.publish("Door_Status", "OPEN")
+            # turn on OPEN pin
+            GPIO.output(openPin1, 1)
+            # sleep long enough to open door (some number of seconds)
+            sleep(10)
+            # turn off open pin
+            GPIO.output(openPin1, 0)
+            door_state = 'OPEN'
+            with open('/tmp/doorstate.txt', "w") as f:
+                f.write(door_state)
+                f.close
+            # publish new door state message
+            client.publish("Door_Status", "OPEN")
+        else :
+            #state mismatch detected - raise alarm for manual check
+            client.publish("Door_Status", "ALARM")
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
@@ -149,7 +186,7 @@ def Check_Maintenance() :
     return
 
 client.on_connect = on_connect
-client.on_message = on_message
+client.on_message = on_message(door_state)
 #this device is going to be "always on" and needs to
 #be listening at all times to function so connect immediately
 client.connect("192.168.68.115",1883,60)
@@ -168,8 +205,7 @@ while True:
         i = i+1 #simple incrementer for the 60 second sleep cycle
 
         if (i < 60):
-            print(i)
-            # if this is not the enxt minute, only check the maintenance switch
+            # this will check the maintenance switch
             # then carry on to sleep for one second
             Check_Maintenance()
         
@@ -181,6 +217,7 @@ while True:
             Collect_Temp_Data()
             Light_Check()
             i = 1 #reset the incrementer to restart the loop
+            print("Still Running!")
         
         sleep(1)
 
