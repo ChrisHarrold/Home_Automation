@@ -49,7 +49,7 @@ try :
             door_state = 'OPEN'
         f.close
     sleep(1)
-    with open('/tmp/doorstate.txt', "w") as f:
+    with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
         f.close
     
@@ -58,7 +58,7 @@ except OSError(FileNotFoundError):
     # ever and we need to create the file. The door must be OPEN
     # at installation for this to work
     door_state = 'OPEN'
-    with open('/tmp/doorstate.txt', "w") as f:
+    with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
         f.close
 
