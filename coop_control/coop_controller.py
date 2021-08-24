@@ -72,7 +72,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     payload = str(msg.payload.decode("utf-8"))
-
+    global door_state
     if (payload == 'coop_close'):
         if (door_state == 'OPEN') :
             # turn on CLOSE pin
