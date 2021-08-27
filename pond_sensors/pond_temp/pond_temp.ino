@@ -1,4 +1,3 @@
-#include <DHT.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <time.h>
@@ -17,24 +16,16 @@ typedef struct {
 
 rtcStore rtcMem;
 
-// Data wire is plugged into digital pin 2 on the Arduino
+// Data wire is plugged into d1
 #define ONE_WIRE_BUS D1
-
-// DHT 11 Settings
-#define DHTPIN D2
-#define DHTTYPE DHT22
 
 // configure analog read for battery level
 const int batt_pin = A0;
 int battery_raw = 0;
 int battery_clean = 0;
 
-
 // Setup a oneWire instance to communicate with any OneWire device
 OneWire oneWire(ONE_WIRE_BUS);
-
-//Setup DHT 22
-DHT dht(DHTPIN, DHTTYPE);
 
 // Pass oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
@@ -92,7 +83,6 @@ void setup(void)
   }
   // If the RTC mem check passes, the program will sample the temps
   sensors.begin();	// Start up the onewire sensors
-  dht.begin();      // start up the DHT11
 
   // Define the MQTT Server connection settings and then launch the MQTT Connection
   client.setServer(mqtt_server, 1883);
@@ -117,7 +107,6 @@ void loop(void)
   }
 
   one_wire_read();
-  dht_read();
   getBatteryLevel();
 
 
@@ -146,32 +135,6 @@ void readFromRTCMemory() {
   Serial.print("count = ");
   Serial.println(rtcMem.count);
   yield();
-}
-
-void dht_read() {
-  //DHT22 read and collect variables - float is a numeric type with better precision than int
-  float humidity = dht.readHumidity();
-  // Read temperature as Celsius (the default - can be change to Farenheit if desired)
-  float temperature = dht.readTemperature();
-  // Check if any reads failed and if so alert to the console, 
-  // and set values to 0 so the process can continue - DHT11 sensors are notoriously flaky
-  if (isnan(humidity) || isnan(temperature)) {
-      Serial.println("Failed to read from DHT sensor! Values set to 0!");
-      temperature = 0;
-      humidity = 0;
-  //actually got a clean reading so go down the happy path and format the reading for the MQTT message    
-  } else {
-      Serial.println(" DHT22 Readings: ");
-      Serial.print("Humidity: "); Serial.print(humidity); Serial.print(" %\t"); 
-      Serial.print("Temperature: "); Serial.print(temperature); 
-      Serial.println(" *C ");
-  }
-  //Serial.println("Constructing the DHT11 payload:");
-  placeholder_value=sprintf(data0, "{\"Unit\":\"Pond_Temp\",\"Sensor\":\"DHT-11\", \"Values\": {\"C_Temp\":\"%.2f\", \"Humidity\":\"%.2f\"}}", temperature, humidity);
-  //Serial.println("Publishing the DHT11 message");
-  while (!client.publish("Pond", data0)) {
-    Serial.print(".");
-  }
 }
 
 void one_wire_read() {
