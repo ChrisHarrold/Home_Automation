@@ -1,7 +1,7 @@
 import sys, datetime, os
 from picamera import PiCamera
 import paho.mqtt.client as mqtt
-from time import sleep
+from time import sleep, time
 import RPi.GPIO as GPIO
 from ds18b20 import DS18B20
 
@@ -63,10 +63,25 @@ except FileNotFoundError:
     # ever and we need to create the file. The door must be OPEN
     # at installation for this to work and NodeRed needs to be in sync
     # this is unlikely to ever be needed, but I am the king of handling
-    # corner cases so why sstop now!?
+    # corner cases so why stop now!?
     door_state = 'OPEN'
     with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
+        f.close
+
+#set up the log file
+try :
+    with open('/var/www/html/coop_logger.txt', "w") as f:
+        timeStr = time.ctime()
+        f.write("new log file started " + timeStr + "\n")
+        f.close
+        
+except FileNotFoundError:
+    # the file was not found so this is 100% the very first run
+    # ever and we need to create the file.
+    with open('/var/www/html/coop_logger.txt', "w+") as f:
+        timeStr = time.ctime()
+        f.write("new log file started " + timeStr + "\n")
         f.close
 
 def door_button_press_callback():
@@ -154,7 +169,7 @@ def on_message(client, userdata, msg):
             client.publish("Door_Status", "ALARM")
 
     if (payload == 'check_door') :
-        # this allows a quick sanity checek via node red to ensure the state on the controller matches the state
+        # this allows a quick sanity check via node red to ensure the state on the controller matches the state
         # on the dashboard
         with open('/tmp/doorstate.txt', "r") as f:
             str_door_temp = f.read()
@@ -168,6 +183,12 @@ def on_message(client, userdata, msg):
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
+
+def log_stash(raising_entity, the_error):
+    with open('/var/www/html/coop_logger.txt', "a") as f:
+        timeStr = time.ctime()
+        f.write(raising_entity + ":" + the_error +":" + timeStr + "\n")
+        f.close
 
 def Light_Check() :
     # checek the daylight sensor to see if we should close the coop
@@ -202,6 +223,7 @@ def Collect_Temp_Data() :
             try :
                 temp_temp_temp = (temp_sensor.tempC(i))
             except IndexError :
+                log_stash("Temp sensor error", "The temperature probe did not read correctly")
                 temp_temp_temp = 100
 
             the_tempC.append(temp_temp_temp)
@@ -221,7 +243,7 @@ def Collect_Temp_Data() :
 
 def Take_Picture():
     coop_cam1.capture('/var/www/html/coop_pic.jpg')
-    #print("took a pic!")
+    log_stash("Camera", "Picture successsfully captured")
     publish_message("Coop_Picture", "'{\"Unit\":\"Coop\", \"Picture\":\"Updated\"}'")
     return
 
@@ -229,15 +251,14 @@ def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
     mdata = ""
     if (state == True) :
-        print("Maintenance Mode Detected")
+        log_stash("Maintenance Mode", "Maintenance mode activated")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
         publish_message("Coop_Sensors", mdata)
         while state :
             sleep(10)
             print("Still In maintenance mode")
-            state = GPIO.input(maintenance_pin)
-
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
+        log_stash("Maintenance Pin", "Maintenance mode deactivated")
         publish_message("Coop_Sensors", mdata)
     return
 
