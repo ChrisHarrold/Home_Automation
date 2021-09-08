@@ -1,7 +1,7 @@
 import sys, datetime, os
 from picamera import PiCamera
 import paho.mqtt.client as mqtt
-from time import sleep, time
+import time
 import RPi.GPIO as GPIO
 from ds18b20 import DS18B20
 
