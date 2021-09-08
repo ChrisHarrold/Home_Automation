@@ -53,7 +53,7 @@ try :
         elif ('OPEN' in str_door_temp) :
             door_state = 'OPEN'
         f.close
-    sleep(1)
+    time.sleep(1)
     with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
         f.close
@@ -91,8 +91,8 @@ def door_button_press_callback():
     if (door_state == 'OPEN') :
         # turn on CLOSE pin
         GPIO.output(closePin1, 1)
-        # sleep long enough to close door (some number of seconds - needs testing)
-        sleep(door_time)
+        # time.sleep long enough to close door (some number of seconds - needs testing)
+        time.sleep(door_time)
         # turn off close pin
         GPIO.output(closePin1, 0)
         #update to new door state
@@ -106,8 +106,8 @@ def door_button_press_callback():
     else :
         # turn on OPEN pin
             GPIO.output(openPin1, 1)
-            # sleep long enough to open door (some number of seconds)
-            sleep(door_time)
+            # time.sleep long enough to open door (some number of seconds)
+            time.sleep(door_time)
             # turn off open pin
             GPIO.output(openPin1, 0)
             #update to new door state
@@ -133,8 +133,8 @@ def on_message(client, userdata, msg):
         if (door_state == 'OPEN') :
             # turn on CLOSE pin
             GPIO.output(closePin1, 1)
-            # sleep long enough to open door (some number of seconds - needs testing)
-            sleep(door_time)
+            # time.sleep long enough to open door (some number of seconds - needs testing)
+            time.sleep(door_time)
             # turn off close pin
             GPIO.output(closePin1, 0)
             #update the new state of the door:
@@ -152,8 +152,8 @@ def on_message(client, userdata, msg):
         if (door_state == 'CLOSED') :
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
-            # sleep long enough to open door (some number of seconds)
-            sleep(door_time)
+            # time.sleep long enough to open door (some number of seconds)
+            time.sleep(door_time)
             # turn off open pin
             GPIO.output(openPin1, 0)
             #update the new state of the door:
@@ -255,7 +255,7 @@ def Check_Maintenance() :
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
         publish_message("Coop_Sensors", mdata)
         while state :
-            sleep(10)
+            time.sleep(10)
             print("Still In maintenance mode")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
         log_stash("Maintenance Pin", "Maintenance mode deactivated")
@@ -289,18 +289,18 @@ while True:
             Light_Check()
             first_run = False
 
-        i = i+1 #simple incrementer for the 60 second sleep cycle
+        i = i+1 #simple incrementer for the 60 second time.sleep cycle
 
         if (i < 60):
             # this will check the maintenance switch
-            # then carry on to sleep for one second.    
+            # then carry on to time.sleep for one second.    
             # if the maintenance mode is activated it
             # will stay in maintenance mode until the switch
             # is changed back to normal op mode 
             Check_Maintenance()
         
         else :
-            # if 60 sleeps have passed, carry out all checks
+            # if 60 time.sleeps have passed, carry out all checks
             # (photo - Temp - Light level - and Maintenance switch)
             Check_Maintenance()
             Take_Picture()
@@ -309,7 +309,7 @@ while True:
             i = 1 #reset the incrementer to restart the loop
             print("Still Running!")
         
-        sleep(1)
+        time.sleep(1)
 
     except KeyboardInterrupt:
         client.disconnect()
