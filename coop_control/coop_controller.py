@@ -253,6 +253,7 @@ def Check_Maintenance() :
     print("I checked!")
     mdata = ""
     if (state == True) :
+        print("Maintenance!")
         log_stash("Maintenance Mode", "Maintenance mode activated")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
         publish_message("Coop_Sensors", mdata)
