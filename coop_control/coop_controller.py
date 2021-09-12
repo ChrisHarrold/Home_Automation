@@ -12,7 +12,6 @@ client = mqtt.Client()
 # I have taken to numbering pins in order so I can see what GPIO
 # I am using at a glance. This keeps me from adding functions and duplicating
 # a pin!
-i = 1
 openPin1 = 5
 closePin1 = 6
 maintenance_pin = 12
@@ -22,6 +21,8 @@ vent_toggle =  25
 lightPin = 24
 active_running_led = 26
 closePin2 = 27
+
+i = 1
 temp_sensor = DS18B20()
 first_run = True
 door_state = ""
@@ -249,6 +250,7 @@ def Take_Picture():
 
 def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
+    print("I checked!")
     mdata = ""
     if (state == True) :
         log_stash("Maintenance Mode", "Maintenance mode activated")
@@ -271,8 +273,8 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.connect("192.168.68.115",1883,60)
 client.loop_start()
-GPIO.add_event_detect(door_toggle, GPIO.RISING, callback=door_button_press_callback, bouncetime=200)
-GPIO.add_event_detect(vent_toggle, GPIO.RISING, callback=vent_button_press_callback, bouncetime=200)
+GPIO.add_event_detect(door_toggle, GPIO.RISING, callback=door_button_press_callback, bouncetime=300)
+GPIO.add_event_detect(vent_toggle, GPIO.RISING, callback=vent_button_press_callback, bouncetime=300)
 
 # turn on status LED after priming the system
 GPIO.output(active_running_led, 1)

@@ -2,7 +2,7 @@
 from coop_control.coop_controller import publish_message
 import RPi.GPIO as GPIO
 import sys, datetime, os
-from time import sleep, time
+import time
 from RPLCD import i2c
 from ds18b20 import DS18B20 #Temp sensor library import
 import paho.mqtt.client as mqtt #import the mqtt client from the paho library
@@ -26,7 +26,7 @@ mreport = False
 
 global interval
 interval = 60 #Change this value to match how often you wish to take readings (in seconds)
-reporting_loop_count = 60 # change this to how many intervals to report in to the hub (60, 60s loops = 1 hour)
+reporting_loop_count = 60 # change this to how many intervals to report in to the hub (60 loops = ~1 hour and 10 mins give or take)
 current_loop_count = 0
 
 # just various counters and value holders for doing work with later
@@ -142,7 +142,7 @@ def debug_mode_on(channel):
     lcd.write_string('--- I = 10 ---')
     
     while GPIO.input(debug_pin) :
-        sleep(10)
+        time.sleep(10)
         filter_level_check()
         Collect_Flow_Data()
         Collect_Temp_Data()
@@ -171,7 +171,7 @@ def maintenance_mode_on(channel):
             lcd.cursor_pos = (3,0)
             lcd.write_string('{} minutes elapsed'.format(maintenance_interval))
             maintenance_interval = maintenance_interval + 1
-            sleep(60)
+            time.sleep(60)
 
 def maintenance_mode_off(channel):
     log_stash("Maintenance Pin", "Maintenance mode deactivated")
@@ -277,7 +277,7 @@ while True:
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
-            sleep(1)
+            time.sleep(1)
         
         else :
             # Interval reset
@@ -307,7 +307,7 @@ while True:
         lcd.write_string('Keyboard interrupt')
         lcd.cursor_pos = (2,0)
         lcd.write_string('Program halting')
-        sleep(20)
+        time.sleep(20)
         lcd.clear()
         lcd.close()
         log_stash("Program halted", "Program halted by keyboard break.")
