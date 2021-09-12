@@ -85,7 +85,7 @@ except FileNotFoundError:
         f.write("new log file started " + timeStr + "\n")
         f.close
 
-def door_button_press_callback():
+def door_button_press_callback(self):
     # manual override button on the controller activates a close or open toggle
     # deppending on the current door state
     global door_state
@@ -120,7 +120,7 @@ def door_button_press_callback():
             client.publish("Door_Status", "OPEN")
 
 
-def vent_button_press_callback():
+def vent_button_press_callback(self):
     print("vent change!")
 
 def on_connect(client, userdata, flags, rc):
@@ -250,7 +250,6 @@ def Take_Picture():
 
 def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
-    print("I checked!")
     mdata = ""
     if (state == True) :
         print("Maintenance!")
