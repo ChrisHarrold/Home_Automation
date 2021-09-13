@@ -256,10 +256,11 @@ def Check_Maintenance() :
         log_stash("Maintenance Mode", "Maintenance mode activated")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning In Progress!"}')
         publish_message("Coop_Sensors", mdata)
-        while state :
+        while GPIO.input(maintenance_pin) :
             time.sleep(10)
             print("Still In maintenance mode")
         mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
+        state = False
         log_stash("Maintenance Pin", "Maintenance mode deactivated")
         publish_message("Coop_Sensors", mdata)
     return
@@ -273,7 +274,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.connect("192.168.68.115",1883,60)
 client.loop_start()
-GPIO.add_event_detect(door_toggle, GPIO.FALLING, callback=door_button_press_callback, bouncetime=300)
+GPIO.add_event_detect(door_toggle, GPIO.RISING, callback=door_button_press_callback, bouncetime=300)
 GPIO.add_event_detect(vent_toggle, GPIO.RISING, callback=vent_button_press_callback, bouncetime=300)
 
 # turn on status LED after priming the system
