@@ -262,7 +262,9 @@ def Check_Maintenance() :
             state = GPIO.input(maintenance_pin)
             print(state)
             print("Still In maintenance mode")
-            
+            if state == False :
+                break
+
     mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
     state = False
     log_stash("Maintenance Pin", "Maintenance mode deactivated")
