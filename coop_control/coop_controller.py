@@ -273,7 +273,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.connect("192.168.68.115",1883,60)
 client.loop_start()
-GPIO.add_event_detect(door_toggle, GPIO.RISING, callback=door_button_press_callback, bouncetime=300)
+GPIO.add_event_detect(door_toggle, GPIO.FALLING, callback=door_button_press_callback, bouncetime=300)
 GPIO.add_event_detect(vent_toggle, GPIO.RISING, callback=vent_button_press_callback, bouncetime=300)
 
 # turn on status LED after priming the system
