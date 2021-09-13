@@ -250,7 +250,6 @@ def Take_Picture():
 
 def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
-    print("First Check " + str(state))
     mdata = ""
     if (state == True) :
         print("Maintenance!")
@@ -265,10 +264,10 @@ def Check_Maintenance() :
             if state == False :
                 break
 
-    mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
-    state = False
-    log_stash("Maintenance Pin", "Maintenance mode deactivated")
-    publish_message("Coop_Sensors", mdata)
+        mdata = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Clean\",\"Values\":\"Coop Cleaning Complete"}')
+        state = False
+        log_stash("Maintenance Pin", "Maintenance mode deactivated")
+        publish_message("Coop_Sensors", mdata)
     return
 
 
