@@ -250,7 +250,7 @@ def Take_Picture():
 
 def Check_Maintenance() :
     state = GPIO.input(maintenance_pin)
-    print(state)
+    print("First Check " + state)
     mdata = ""
     if (state == True) :
         print("Maintenance!")
@@ -260,7 +260,7 @@ def Check_Maintenance() :
         while state :
             time.sleep(10)
             state = GPIO.input(maintenance_pin)
-            print(state)
+            print("In the loop " + state)
             print("Still In maintenance mode")
             if state == False :
                 break
