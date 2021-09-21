@@ -212,6 +212,7 @@ def Collect_Temp_Data() :
         os.system('modprobe w1-gpio')
         os.system('modprobe w1-therm')
         Temp_sensor_count = temp_sensor.device_count()
+        print(Temp_sensor_count)
 
         the_tempC = []
         the_tempF = []
