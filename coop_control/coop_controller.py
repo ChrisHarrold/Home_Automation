@@ -65,7 +65,7 @@ except FileNotFoundError:
     # at installation for this to work and NodeRed needs to be in sync
     # this is unlikely to ever be needed, but I am the king of handling
     # corner cases so why stop now!?
-    door_state = 'OPEN'
+    door_state = 'CLOSED'
     with open('/tmp/doorstate.txt', "w+") as f:
         f.write(door_state)
         f.close
