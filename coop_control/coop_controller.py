@@ -84,8 +84,8 @@ def get_door_state() :
         # at installation for this to work and NodeRed needs to be in sync
         # this is unlikely to ever be needed, but I am the king of handling
         # corner cases so why stop now!?
-        log_stash("State File Misssing", "Door will be set to CLOSED for default first setup")
-        door_state = 'CLOSED'
+        log_stash("State File Misssing", "Door will be set to OPEN for default first setup")
+        door_state = 'OPEN'
         with open('/tmp/doorstate.txt', "w+") as f:
             f.write(door_state)
             f.close
