@@ -30,7 +30,7 @@ vent_state = ""
 # I realized the motor timming was in a bunch of places suddenly so I thought to put
 # a single variable here to control the door motor runtime. That way once I get the
 # right timing, it is a single change instead of 6 or 8
-open_door_time = 20
+open_door_time = 16
 close_door_time = 10
 vent_time = 3
 
