@@ -30,7 +30,8 @@ vent_state = ""
 # I realized the motor timming was in a bunch of places suddenly so I thought to put
 # a single variable here to control the door motor runtime. That way once I get the
 # right timing, it is a single change instead of 6 or 8
-door_time = 10
+open_door_time = 10
+close_door_time = 6
 vent_time = 3
 
 #set all pins to startup modes:
@@ -93,7 +94,7 @@ def door_button_press_callback(self):
         # turn on CLOSE pin
         GPIO.output(closePin1, 1)
         # time.sleep long enough to close door (some number of seconds - needs testing)
-        time.sleep(door_time)
+        time.sleep(close_door_time)
         # turn off close pin
         GPIO.output(closePin1, 0)
         #update to new door state
@@ -108,7 +109,7 @@ def door_button_press_callback(self):
         # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
-            time.sleep(door_time)
+            time.sleep(open_door_time)
             # turn off open pin
             GPIO.output(openPin1, 0)
             #update to new door state
@@ -135,7 +136,7 @@ def on_message(client, userdata, msg):
             # turn on CLOSE pin
             GPIO.output(closePin1, 1)
             # time.sleep long enough to open door (some number of seconds - needs testing)
-            time.sleep(door_time)
+            time.sleep(close_door_time)
             # turn off close pin
             GPIO.output(closePin1, 0)
             #update the new state of the door:
@@ -154,7 +155,7 @@ def on_message(client, userdata, msg):
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
-            time.sleep(door_time)
+            time.sleep(open_door_time)
             # turn off open pin
             GPIO.output(openPin1, 0)
             #update the new state of the door:
