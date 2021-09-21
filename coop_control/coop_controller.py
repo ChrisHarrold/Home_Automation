@@ -128,6 +128,7 @@ def door_button_press_callback(self):
                 f.close
             # publish new door state message to NodeRed
             client.publish("Door_Status", "OPEN")
+    Take_Picture()
 
 
 def vent_button_press_callback(self):
@@ -196,6 +197,7 @@ def on_message(client, userdata, msg):
                 door_data = ('{\"Unit\":\"Coop\",\"Sensor\":\"Door_State\",\"Values\":\"OPEN"}')
                 publish_message("Coop_Sensors", door_data)
             f.close
+    Take_Picture()
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
