@@ -47,31 +47,6 @@ GPIO.setup(closePin1, GPIO.OUT)
 GPIO.setup(door_toggle, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(vent_toggle, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-# get last known local door and vent values:
-try :
-    with open('/tmp/doorstate.txt', "r") as f:
-        str_door_temp = f.read()
-        if ('CLOSED' in str_door_temp) :
-            door_state = 'CLOSED'
-        elif ('OPEN' in str_door_temp) :
-            door_state = 'OPEN'
-        f.close
-    time.sleep(1)
-    with open('/tmp/doorstate.txt', "w+") as f:
-        f.write(door_state)
-        f.close
-    
-except FileNotFoundError:
-    # the file was not found so this is 100% the very first run
-    # ever and we need to create the file. The door must be OPEN
-    # at installation for this to work and NodeRed needs to be in sync
-    # this is unlikely to ever be needed, but I am the king of handling
-    # corner cases so why stop now!?
-    door_state = 'CLOSED'
-    with open('/tmp/doorstate.txt', "w+") as f:
-        f.write(door_state)
-        f.close
-
 #set up the log file
 try :
     with open('/var/www/html/coop_logger.txt', "w") as f:
@@ -87,11 +62,41 @@ except FileNotFoundError:
         f.write("new log file started " + timeStr + "\n")
         f.close
 
+# get last known local door and vent values:
+def get_door_state() :
+    log_stash("Checking door state file", "Reading current Door State")
+    try :
+        with open('/tmp/doorstate.txt', "r") as f:
+            str_door_temp = f.read()
+            if ('CLOSED' in str_door_temp) :
+                door_state = 'CLOSED'
+            elif ('OPEN' in str_door_temp) :
+                door_state = 'OPEN'
+            f.close
+        time.sleep(1)
+        with open('/tmp/doorstate.txt', "w+") as f:
+            f.write(door_state)
+            f.close
+    
+    except FileNotFoundError:
+        # the file was not found so this is 100% the very first run
+        # ever and we need to create the file. The door must be OPEN
+        # at installation for this to work and NodeRed needs to be in sync
+        # this is unlikely to ever be needed, but I am the king of handling
+        # corner cases so why stop now!?
+        log_stash("State File Misssing", "Door will be set to CLOSED for default first setup")
+        door_state = 'CLOSED'
+        with open('/tmp/doorstate.txt', "w+") as f:
+            f.write(door_state)
+            f.close
+    log_stash("Current Door State", "The system shows the door is " + door_state)
+    return (door_state)
+
 def door_button_press_callback(self):
     log_stash("Door Button Used", "Door button pressed")
     # manual override button on the controller activates a close or open toggle
     # deppending on the current door state
-    global door_state
+    door_state = get_door_state()
     if (door_state == 'OPEN') :
         log_stash("Door was open", "The door will be closed")
         # turn on CLOSE pin
@@ -136,7 +141,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     log_stash("Message Received", "New Message received on the door action channel")
     payload = str(msg.payload.decode("utf-8"))
-    global door_state
+    door_state = get_door_state()
     if (payload == 'coop_close'):
         if (door_state == 'OPEN') :
             # turn on CLOSE pin
@@ -301,6 +306,7 @@ while True:
     try:
         if first_run :
             log_stash("Executing initial run", "First run of the application is in process")
+            get_door_state()
             # print("First Run")
             # on the first run the program does the key checks immediately
             # helps with debugging on the Node Red side
