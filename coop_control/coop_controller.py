@@ -88,10 +88,12 @@ except FileNotFoundError:
         f.close
 
 def door_button_press_callback(self):
+    log_stash("Door Button Used", "Door button pressed")
     # manual override button on the controller activates a close or open toggle
     # deppending on the current door state
     global door_state
     if (door_state == 'OPEN') :
+        log_stash("Door was open", "The door will be closed")
         # turn on CLOSE pin
         GPIO.output(closePin1, 1)
         # time.sleep long enough to close door (some number of seconds - needs testing)
@@ -108,6 +110,7 @@ def door_button_press_callback(self):
     
     else :
         # turn on OPEN pin
+            log_stash("Door was closed", "The door will be opened")
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
             time.sleep(open_door_time)
@@ -126,10 +129,12 @@ def vent_button_press_callback(self):
     print("vent change!")
 
 def on_connect(client, userdata, flags, rc):
+    log_stash("MQTT Connected", "Connected with result code "+str(rc))
     print("Connected with result code "+str(rc))
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
+    log_stash("Message Received", "New Message received on the door action channel")
     payload = str(msg.payload.decode("utf-8"))
     global door_state
     if (payload == 'coop_close'):
@@ -152,7 +157,9 @@ def on_message(client, userdata, msg):
             client.publish("Door_Status", "ALARM")
 
     if (payload == 'coop_open'):
+        log_stash("Open Coop Message Received", "Opening coop on message from control UI")
         if (door_state == 'CLOSED') :
+            log_stash("Opening Coop", "Opening coop on message from control UI")
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
@@ -167,6 +174,7 @@ def on_message(client, userdata, msg):
             # publish new door state message
             client.publish("Door_Status", "OPEN")
         else :
+            log_stash("Client Sync Issue!", "UI doess not match controller")
             #state mismatch detected - raise alarm for manual check
             #it should be REALLY hard to get to this state
             client.publish("Door_Status", "ALARM")
@@ -292,7 +300,8 @@ GPIO.output(active_running_led, 1)
 while True:
     try:
         if first_run :
-            print("First Run")
+            log_stash("Executing initial run", "First run of the application is in process")
+            # print("First Run")
             # on the first run the program does the key checks immediately
             # helps with debugging on the Node Red side
             Take_Picture()
@@ -318,11 +327,12 @@ while True:
             Collect_Temp_Data()
             Light_Check()
             i = 1 #reset the incrementer to restart the loop
-            print("Still Running!")
+            # print("Still Running!")
         
         time.sleep(1)
 
     except KeyboardInterrupt:
+        log_stash("Keyboard INterrupt received", "Exiting the program.")
         client.disconnect()
         client.loop_stop()
         GPIO.output(active_running_led, 0)
