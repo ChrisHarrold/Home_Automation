@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys, datetime, os
 from picamera import PiCamera
 import paho.mqtt.client as mqtt
