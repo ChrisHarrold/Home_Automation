@@ -226,8 +226,8 @@ def Collect_Temp_Data() :
         # only the FIRST TIME the sensor is initialized. In order to update the sensor
         # you need to run these two command again. I feel the way RPi does 1-Wire
         # is a major deficiency really. Having to shell to the OS is not ideal.
-        os.system('modprobe w1-gpio')
-        os.system('modprobe w1-therm')
+        os.system('sudo modprobe w1-gpio')
+        os.system('sudo modprobe w1_therm')
         Temp_sensor_count = temp_sensor.device_count()
         #print(Temp_sensor_count)
 
@@ -254,6 +254,7 @@ def Collect_Temp_Data() :
         if i > 0 :
             data1 = ('{{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T1_F\":\"{1:.2f}\"}}}}'.format (the_tempC[0], the_tempF[0]))
         else :
+            log_stash("Temp sensor error", "No temp probes responded to the system")
             data1 = ('{\"Unit\":\"Coop\",\"Sensor\":\"Coop_Temp\",\"Values\":\"NO DATA\"}')
         
         publish_message("Coop_Sensors", data1)
