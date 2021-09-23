@@ -66,7 +66,7 @@ except FileNotFoundError:
 def get_door_state() :
     log_stash("Checking door state file", "Reading current Door State")
     try :
-        with open('/tmp/doorstate.txt', "r") as f:
+        with open('/temp/doorstate.txt', "r") as f:
             str_door_temp = f.read()
             if ('CLOSED' in str_door_temp) :
                 door_state = 'CLOSED'
@@ -74,7 +74,7 @@ def get_door_state() :
                 door_state = 'OPEN'
             f.close
         time.sleep(1)
-        with open('/tmp/doorstate.txt', "w+") as f:
+        with open('/temp/doorstate.txt', "w+") as f:
             f.write(door_state)
             f.close
     
@@ -86,7 +86,7 @@ def get_door_state() :
         # corner cases so why stop now!?
         log_stash("State File Misssing", "Door will be set to OPEN for default first setup")
         door_state = 'OPEN'
-        with open('/tmp/doorstate.txt', "w+") as f:
+        with open('/temp/doorstate.txt', "w+") as f:
             f.write(door_state)
             f.close
     log_stash("Current Door State", "The system shows the door is " + door_state)
@@ -107,7 +107,7 @@ def door_button_press_callback(self):
         GPIO.output(closePin1, 0)
         #update to new door state
         door_state = 'CLOSED'
-        with open('/tmp/doorstate.txt', "w") as f:
+        with open('/temp/doorstate.txt', "w") as f:
             f.write(door_state)
             f.close
         # publish new door state message to NodeRed
@@ -123,7 +123,7 @@ def door_button_press_callback(self):
             GPIO.output(openPin1, 0)
             #update to new door state
             door_state = 'OPEN'
-            with open('/tmp/doorstate.txt', "w") as f:
+            with open('/temp/doorstate.txt', "w") as f:
                 f.write(door_state)
                 f.close
             # publish new door state message to NodeRed
@@ -153,7 +153,7 @@ def on_message(client, userdata, msg):
             GPIO.output(closePin1, 0)
             #update the new state of the door:
             door_state = 'CLOSED'
-            with open('/tmp/doorstate.txt', "w") as f:
+            with open('/temp/doorstate.txt', "w") as f:
                 f.write(door_state)
                 f.close
             # publish new door state message
@@ -174,7 +174,7 @@ def on_message(client, userdata, msg):
             GPIO.output(openPin1, 0)
             #update the new state of the door:
             door_state = 'OPEN'
-            with open('/tmp/doorstate.txt', "w") as f:
+            with open('/temp/doorstate.txt', "w") as f:
                 f.write(door_state)
                 f.close
             # publish new door state message
@@ -188,7 +188,7 @@ def on_message(client, userdata, msg):
     if (payload == 'check_door') :
         # this allows a quick sanity check via node red to ensure the state on the controller matches the state
         # on the dashboard
-        with open('/tmp/doorstate.txt', "r") as f:
+        with open('/temp/doorstate.txt', "r") as f:
             str_door_temp = f.read()
             if ('CLOSED' in str_door_temp) :
                 door_data = ('{\"Unit\":\"Coop\",\"Sensor\":\"Door_State\",\"Values\":\"CLOSED"}')
