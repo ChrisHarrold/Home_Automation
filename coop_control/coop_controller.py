@@ -97,11 +97,11 @@ def door_button_press_callback(self):
     # manual override button on the controller activates a close or open toggle
     # deppending on the current door state
     door_state = get_door_state()
+    
     if (door_state == 'OPEN') :
         log_stash("Door was open", "The door will be closed")
         # turn on CLOSE pin
         GPIO.output(closePin1, 1)
-        # time.sleep long enough to close door (some number of seconds - needs testing)
         time.sleep(close_door_time)
         # turn off close pin
         GPIO.output(closePin1, 0)
@@ -112,12 +112,14 @@ def door_button_press_callback(self):
             f.close
         # publish new door state message to NodeRed
         client.publish("Door_Status", "CLOSED")
+        Take_Picture()
+        log_stash("Door was Closed ", "Exiting Button Press Routine ")
+        return()
     
     else :
         # turn on OPEN pin
             log_stash("Door was closed", "The door will be opened")
             GPIO.output(openPin1, 1)
-            # time.sleep long enough to open door (some number of seconds)
             time.sleep(open_door_time)
             # turn off open pin
             GPIO.output(openPin1, 0)
@@ -128,7 +130,10 @@ def door_button_press_callback(self):
                 f.close
             # publish new door state message to NodeRed
             client.publish("Door_Status", "OPEN")
-    Take_Picture()
+            Take_Picture()
+            log_stash("Door was opened ", "Exiting button press routine ")
+            return()
+ 
 
 
 def vent_button_press_callback(self):
