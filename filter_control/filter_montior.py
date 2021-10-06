@@ -286,7 +286,6 @@ while True:
             time.sleep(1)
         
         else :
-            print("I got here - checks")
             log_stash("Normal run reset ", "Publishing data triggered ")
             # Interval reset
             interval = 60
