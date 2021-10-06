@@ -206,10 +206,11 @@ def filter_level_check():
     if (GPIO.input(FILTER_SENSOR) == False) :
         filter_full = True
         GPIO.output(filter_alert_LED, 1)
-        log_stash("Filter level", "Float level confirmed high")
+        log_stash("Filter level ", "Float level confirmed high ")
     else :
         GPIO.output(filter_alert_LED, 0)
         filter_full = False
+        log_stash("Filter level ", "Float level confirmed low ")
     the_message = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
     log_stash("Filter Level Data Collected ", "Sending to publisher ")
     publish_message("Pond", the_message)
@@ -284,6 +285,7 @@ while True:
             lcd.write_string('{} '.format(interval))
             interval = interval - 1
             time.sleep(1)
+            print("sleepping")
         
         else :
             print("I got here - checks")
@@ -298,7 +300,7 @@ while True:
                 print("I got here - collected flow data")
                 Collect_Temp_Data()
                 print("I got here - collected temmp data")
-                filter_level_check
+                filter_level_check()
                 print("I got here - collected filter level data")
                 current_loop_count = 0           
                 
