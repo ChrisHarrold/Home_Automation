@@ -267,6 +267,7 @@ while True:
             current_loop_count = reporting_loop_count
             first_run = False
             log_stash("First Run Confirmation", "The monitor has started its first run")
+            print("I got here - 1st run")
 
         while interval > 0:
                       
@@ -279,14 +280,19 @@ while True:
             time.sleep(1)
         
         else :
+            print("I got here - checks")
             # Interval reset
             interval = 60
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                print("I got here - reporting loop")
                 lcd.clear()
                 Collect_Flow_Data()
+                print("I got here - collected flow data")
                 Collect_Temp_Data()
+                print("I got here - collected temmp data")
                 filter_level_check
+                print("I got here - collected filter level data")
                 current_loop_count = 0           
                 
             # Reset, clear all the data strings, and restart the regular loop
