@@ -300,7 +300,6 @@ while True:
             
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = current_loop_count + 1
-            lcd.clear()
             lcd.cursor_pos = (3,0)
             lcd.write_string('Next Update:')
             lcd.cursor_pos = (3,17)
