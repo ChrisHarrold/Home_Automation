@@ -157,37 +157,37 @@ def debug_mode_off(channel):
     lcd.cursor_pos = (3,0)
     lcd.write_string('Next Update:')
 
-def maintenance_mode_on(channel):
-    if GPIO.input(maintenance_pin) :
-        # If maintenance mode has been activated, the unit will operate in this mode until the switch is flipped off again
-        # No data is collected during the maintenance interval (Maintenance assumes the filter is being cleaned out)
-        log_stash("Maintenance Pin", "Maintenance mode activated")
+def Check_Maintenance() :
+    state = GPIO.input(maintenance_pin)
+    mdata = ""
+    maintenance_interval = 0
+    if (state == True) :
+        print("Maintenance!")
         lcd.clear()
         lcd.cursor_pos = (0,0)
         lcd.write_string(' Maintenance Mode ')
         lcd.cursor_pos = (2,0)
         lcd.write_string('-- Switch ON --')
-        while GPIO.input(maintenance_pin) :
+        log_stash("Maintenance Mode", "Maintenance mode activated")
+        mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Cleaning in Progress!"}')
+        publish_message("Coop_Sensors", mdata)
+        while state :
+            time.sleep(10)
             lcd.cursor_pos = (3,0)
             lcd.write_string('{} minutes elapsed'.format(maintenance_interval))
             maintenance_interval = maintenance_interval + 1
             time.sleep(60)
+            state = GPIO.input(maintenance_pin)
+            print("In the loop " + str(state))
+            print("Still In maintenance mode")
+            if state == False :
+                break
 
-def maintenance_mode_off(channel):
-    log_stash("Maintenance Pin", "Maintenance mode deactivated")
-    lcd.clear()
-    lcd.cursor_pos = (0,0)
-    lcd.write_string(' Maintenance Mode ')
-    lcd.cursor_pos = (2,0)
-    lcd.write_string('-- Switch OFF --')
-    lcd.cursor_pos = (3,0)
-    lcd.write_string('Next Update:')
-
-# these lines add the listeners for maintenance mode and debug modes
-GPIO.add_event_detect(maintenance_pin, GPIO.RISING, callback=maintenance_mode_on)
-GPIO.add_event_detect(debug_pin, GPIO.RISING, callback=debug_mode_on)
-GPIO.add_event_detect(maintenance_pin, GPIO.FALLING, callback=maintenance_mode_off)
-GPIO.add_event_detect(debug_pin, GPIO.FALLING, callback=debug_mode_off)
+        mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Filter Cleaning Complete"}')
+        state = False
+        log_stash("Maintenance Pin", "Maintenance mode deactivated")
+        publish_message("Coop_Sensors", mdata)
+    return
 
 # Initialize temp sensor
 # this uses 1-wire and is connected to GPIO4 (although i do not think this matters?)
@@ -272,7 +272,7 @@ while True:
         while interval > 0:
                       
             # it will check the filter sensor on every loop to confirm if it needs to light the light on the panel 
-            filter_level_check()
+            Check_Maintenance()
             lcd.home()
             lcd.cursor_pos = (3,17)
             lcd.write_string('{} '.format(interval))
