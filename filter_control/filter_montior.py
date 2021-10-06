@@ -169,9 +169,8 @@ def Check_Maintenance() :
         lcd.write_string('-- Switch ON --')
         log_stash("Maintenance Mode ", "Maintenance mode activated ")
         mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Cleaning in Progress!"}')
-        publish_message("Coop_Sensors", mdata)
+        publish_message("Pond", mdata)
         while state :
-            time.sleep(10)
             lcd.cursor_pos = (3,0)
             lcd.write_string('{} minutes elapsed'.format(maintenance_interval))
             maintenance_interval = maintenance_interval + 1
@@ -185,7 +184,7 @@ def Check_Maintenance() :
         mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Filter Cleaning Complete"}')
         state = False
         log_stash("Maintenance Pin ", "Maintenance mode deactivated ")
-        publish_message("Coop_Sensors", mdata)
+        publish_message("Pond", mdata)
     return
 
 # Initialize temp sensor
@@ -247,7 +246,7 @@ def Collect_Temp_Data() :
             try :
                 temp_temp_temp = (temp_sensor.tempC(i))
             except IndexError :
-                log_stash("Themal probe failure", "Temp sensor " + i + " failed to read.")
+                log_stash("Themal probe failure! ", "Temp sensor " + i + " failed to read correctly. ")
                 temp_temp_temp = 100
 
             the_tempC.append(temp_temp_temp)
@@ -275,7 +274,7 @@ while True:
             first_run = False
             log_stash("First Run Confirmation", "The monitor has started its first run")
 
-        while interval > 0:
+        if interval > 0:
                       
             # it will check the filter sensor on every loop to confirm if it needs to light the light on the panel 
             Check_Maintenance()
@@ -286,19 +285,19 @@ while True:
             time.sleep(1)
         
         else :
-            log_stash("Normal run reset ", "Publishing data triggered ")
+            log_stash("One minute elapsed ", "Data collection loop triggered ")
+            publish_message("Control","Filter Updated")  
             # Interval reset
             interval = 60
             # This is the data hub report part of the script
             if current_loop_count == reporting_loop_count :
+                log_stash("Data Reporting loop triggered ", "Data WILL BE reported ")
                 lcd.clear()
                 Collect_Flow_Data()
                 Collect_Temp_Data()
                 filter_level_check()
                 current_loop_count = 0   
-
-            publish_message("Control","Filter Updated")        
-                
+            
             # Reset, clear all the data strings, and restart the regular loop
             current_loop_count = current_loop_count + 1
             lcd.clear()
@@ -308,7 +307,7 @@ while True:
             lcd.write_string('{} '.format(interval))
             count1 = 0
             count2 = 0
-            log_stash("Resetting to normal loop ", "Data reported ")
+            log_stash("LCD Updated ", "Data NOT reported ")
 
     except KeyboardInterrupt:
         log_stash("Keyboard interrupt", "Program break received. terminating program.")
