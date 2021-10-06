@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from coop_control.coop_controller import publish_message
 import RPi.GPIO as GPIO
 import sys, datetime, os
 import time
