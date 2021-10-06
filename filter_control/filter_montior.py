@@ -131,7 +131,7 @@ def debug_mode_on(channel):
     
     # triggering the debug mode will override all other operations and force the device into debug
     # this will update the hub every 10 seconds
-    log_stash("Debug Pin", "Debug mode activated")
+    log_stash("Debug Pin ", "Debug mode activated ")
     lcd.clear()
     lcd.cursor_pos = (0,0)
     lcd.write_string('--- Debug Mode ---')
@@ -147,7 +147,7 @@ def debug_mode_on(channel):
         Collect_Temp_Data()
 
 def debug_mode_off(channel):
-    log_stash("Debug Pin", "Debug mode deactivated")
+    log_stash("Debug Pin ", "Debug mode deactivated ")
     lcd.clear()
     lcd.cursor_pos = (0,0)
     lcd.write_string(' Debug Mode ')
@@ -167,7 +167,7 @@ def Check_Maintenance() :
         lcd.write_string(' Maintenance Mode ')
         lcd.cursor_pos = (2,0)
         lcd.write_string('-- Switch ON --')
-        log_stash("Maintenance Mode", "Maintenance mode activated")
+        log_stash("Maintenance Mode ", "Maintenance mode activated ")
         mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Cleaning in Progress!"}')
         publish_message("Coop_Sensors", mdata)
         while state :
@@ -184,7 +184,7 @@ def Check_Maintenance() :
 
         mdata = ('{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Maintenance\",\"Values\":\"Filter Cleaning Complete"}')
         state = False
-        log_stash("Maintenance Pin", "Maintenance mode deactivated")
+        log_stash("Maintenance Pin ", "Maintenance mode deactivated ")
         publish_message("Coop_Sensors", mdata)
     return
 
@@ -197,6 +197,7 @@ temp_sensor = DS18B20()
 broker_address = "192.168.68.115" 
 client = mqtt.Client("Filter_Monitor") #create new instance
 client.connect("192.168.68.115",1883,60)
+log_stash("MQTT Connection Success! ", "MQTT connected ")
 client.loop_start()
 
 def filter_level_check():
@@ -210,6 +211,7 @@ def filter_level_check():
         GPIO.output(filter_alert_LED, 0)
         filter_full = False
     the_message = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Level\",\"Values\":{{\"Trigger\":\"{0}\"}}}}'.format (filter_full))
+    log_stash("Filter Level Data Collected ", "Sending to publisher ")
     publish_message("Pond", the_message)
     
 def Collect_Flow_Data() :
@@ -221,6 +223,7 @@ def Collect_Flow_Data() :
         lcd.cursor_pos = (1,0)
         lcd.write_string('Flow 2 {0:.2f} LPM'.format (flow2))
         data0 = '{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Flow\",\"Values\":{{\"Flow1\":\"{0:.2f}\",\"Flow2\":\"{1:.2f}\"}}}}'.format (flow1, flow2)
+        log_stash("Flow Data Collected ", "Sending to publisher ")
         publish_message("Pond", data0)
               
 def Collect_Temp_Data() :
@@ -252,10 +255,13 @@ def Collect_Temp_Data() :
         lcd.cursor_pos = (2,0)
         lcd.write_string('{0:.1f}/{1:.1f}/{2:.1f} '.format (the_tempC[0], the_tempC[1], the_tempC[2]))
         data1 = ('{{\"Unit\":\"Filter\",\"Sensor\":\"Filter_Temp\",\"Values\":{{\"T1_C\":\"{0:.2f}\",\"T2_C\":\"{1:.2f}\",\"T3_C\":\"{2:.2f}\",\"T1_F\":\"{3:.2f}\",\"T2_F\":\"{4:.2f}\",\"T3_F\":\"{5:.2f}\"}}}}'.format (the_tempC[0], the_tempC[1], the_tempC[2],the_tempF[0], the_tempF[1], the_tempF[2]))
+        log_stash("Temp Data Collected ", "Sending to publisher ")
         publish_message("Pond", data1)
 
 def publish_message(the_topic, the_message):
     client.publish(the_topic, the_message)
+    log_stash("I published a message ", " it was: " + the_message + " ")
+
     
 # Here is the actual program:
 while True:
@@ -281,6 +287,7 @@ while True:
         
         else :
             print("I got here - checks")
+            log_stash("Normal run reset ", "Publishing data triggered ")
             # Interval reset
             interval = 60
             # This is the data hub report part of the script
@@ -304,6 +311,7 @@ while True:
             lcd.write_string('{} '.format(interval))
             count1 = 0
             count2 = 0
+            log_stash("Resetting to normal loop ", "Data reported ")
 
     except KeyboardInterrupt:
         log_stash("Keyboard interrupt", "Program break received. terminating program.")
