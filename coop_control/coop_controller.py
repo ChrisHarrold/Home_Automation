@@ -145,11 +145,12 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
-    log_stash("Message Received", "New Message received on the door action channel")
+    log_stash("Message Received for door action. ", "A new message was received on the door action channel")
     payload = str(msg.payload.decode("utf-8"))
     door_state = get_door_state()
     if (payload == 'coop_close'):
         if (door_state == 'OPEN') :
+            log_stash("Close Coop Message Received ", "Closing coop on message from control UI ")
             # turn on CLOSE pin
             GPIO.output(closePin1, 1)
             # time.sleep long enough to open door (some number of seconds - needs testing)
@@ -164,15 +165,14 @@ def on_message(client, userdata, msg):
             # publish new door state message
             client.publish("Door_Status", "CLOSED")
         else :
-            log_stash("Door State mismatch detected between UI and controller. ", "Ignoring request ")
+            log_stash("Close Coop Message Received but door is CLOSED. ", "Ignoring request ")
             #state mismatch detected - raise alarm for manual check
             #it should be REALLY hard to get to this state
             client.publish("Door_Status", door_state)
 
     if (payload == 'coop_open'):
-        log_stash("Open Coop Message Received ", "Opening coop on message from control UI ")
         if (door_state == 'CLOSED') :
-            log_stash("Opening Coop ", "Opening coop on message from control UI ")
+            log_stash("Open Coop Message Received ", "Opening coop on message from control UI ")
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
@@ -187,7 +187,7 @@ def on_message(client, userdata, msg):
             # publish new door state message
             client.publish("Door_Status", "OPEN")
         else :
-            log_stash("Door State mismatch detected between UI and controller. ", "Ignoring request ")
+            log_stash("OPEN Coop Message Received but door is OPEN.  ", "Ignoring request ")
             #state mismatch detected - raise alarm for manual check
             #it should be REALLY hard to get to this state
             client.publish("Door_Status", door_state)
@@ -195,6 +195,7 @@ def on_message(client, userdata, msg):
     if (payload == 'check_door') :
         # this allows a quick sanity check via node red to ensure the state on the controller matches the state
         # on the dashboard
+        log_stash("Door status check message received. ", "Reading local status file for current status. ")
         with open('/temp/doorstate.txt', "r") as f:
             str_door_temp = f.read()
             if ('CLOSED' in str_door_temp) :
