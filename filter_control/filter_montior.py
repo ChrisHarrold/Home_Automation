@@ -69,7 +69,7 @@ except FileNotFoundError:
 def log_stash(raising_entity, the_error):
     with open('/var/www/html/pond_logger.txt', "a") as f:
         timeStr = time.ctime()
-        f.write(raising_entity + ":" + the_error +":" + timeStr + "\n")
+        f.write(raising_entity + "  :  " + the_error +"  :  " + timeStr + "\n")
         f.close
 
 # values to initialise the LCD
@@ -188,10 +188,10 @@ def Check_Maintenance() :
     return
 
 # Initialize temp sensor
-# this uses 1-wire and is connected to GPIO4 (although i do not think this matters?)
+# this uses 1-wire and is connected to GPIO4
 temp_sensor = DS18B20()
 
-# initialize MQTT for sending to the home hub and spcify the variables for holding messages
+# initialize MQTT for sending to the home hub and specify the variables for holding messages
 # this will stay connected indefinitely to allow simple message publishing
 broker_address = "192.168.68.115" 
 client = mqtt.Client("Filter_Monitor") #create new instance

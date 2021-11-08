@@ -93,7 +93,7 @@ def get_door_state() :
     return (door_state)
 
 def door_button_press_callback(self):
-    log_stash("Door Button Used", "Door button pressed")
+    log_stash("Door Button Used ", "Door button pressed - manual open activated. ")
     # manual override button on the controller activates a close or open toggle
     # deppending on the current door state
     door_state = get_door_state()
@@ -118,7 +118,7 @@ def door_button_press_callback(self):
     
     else :
         # turn on OPEN pin
-            log_stash("Door was closed", "The door will be opened")
+            log_stash("Door was closed ", "The door will be opened ")
             GPIO.output(openPin1, 1)
             time.sleep(open_door_time)
             # turn off open pin
@@ -164,13 +164,15 @@ def on_message(client, userdata, msg):
             # publish new door state message
             client.publish("Door_Status", "CLOSED")
         else :
+            log_stash("Door State mismatch detected between UI and controller. ", "Ignoring request ")
             #state mismatch detected - raise alarm for manual check
-            client.publish("Door_Status", "ALARM")
+            #it should be REALLY hard to get to this state
+            client.publish("Door_Status", door_state)
 
     if (payload == 'coop_open'):
-        log_stash("Open Coop Message Received", "Opening coop on message from control UI")
+        log_stash("Open Coop Message Received ", "Opening coop on message from control UI ")
         if (door_state == 'CLOSED') :
-            log_stash("Opening Coop", "Opening coop on message from control UI")
+            log_stash("Opening Coop ", "Opening coop on message from control UI ")
             # turn on OPEN pin
             GPIO.output(openPin1, 1)
             # time.sleep long enough to open door (some number of seconds)
@@ -185,10 +187,10 @@ def on_message(client, userdata, msg):
             # publish new door state message
             client.publish("Door_Status", "OPEN")
         else :
-            log_stash("Client Sync Issue!", "UI doess not match controller")
+            log_stash("Door State mismatch detected between UI and controller. ", "Ignoring request ")
             #state mismatch detected - raise alarm for manual check
             #it should be REALLY hard to get to this state
-            client.publish("Door_Status", "ALARM")
+            client.publish("Door_Status", door_state)
 
     if (payload == 'check_door') :
         # this allows a quick sanity check via node red to ensure the state on the controller matches the state
