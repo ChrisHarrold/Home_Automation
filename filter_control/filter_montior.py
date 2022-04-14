@@ -25,7 +25,7 @@ mreport = False
 
 global interval
 interval = 60 #Change this value to match how often you wish to take readings (in seconds)
-reporting_loop_count = 60 # change this to how many intervals to report in to the hub (60 loops = ~1 hour and 10 mins give or take)
+reporting_loop_count = 10 # change this to how many intervals to report in to the hub (60 loops = ~1 hour and 10 mins give or take)
 current_loop_count = 0
 
 # just various counters and value holders for doing work with later
