@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import traceback
 import RPi.GPIO as GPIO
 import sys, datetime, os
 import time
@@ -259,8 +260,11 @@ def Collect_Temp_Data() :
         publish_message("Pond", data1)
 
 def publish_message(the_topic, the_message):
-    client.publish(the_topic, the_message)
-    log_stash("I published a message ", " it was: " + the_message + " ")
+    try:
+        client.publish(the_topic, the_message)
+        log_stash("I published a message ", " it was: " + the_message + " ")
+    except Exception:
+        traceback.print_exc()("I published a message ", " it was: " + the_message + " ")
 
     
 # Here is the actual program:

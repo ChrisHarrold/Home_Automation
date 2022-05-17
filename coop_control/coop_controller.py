@@ -116,32 +116,30 @@ def door_button_press_callback(self):
         log_stash("Door was Closed ", "Exiting Button Press Routine ")
         return()
     
-    else :
+    if (door_state == 'CLOSED') :
         # turn on OPEN pin
-            log_stash("Door was closed ", "The door will be opened ")
-            GPIO.output(openPin1, 1)
-            time.sleep(open_door_time)
-            # turn off open pin
-            GPIO.output(openPin1, 0)
-            #update to new door state
-            door_state = 'OPEN'
-            with open('/temp/doorstate.txt', "w") as f:
-                f.write(door_state)
-                f.close
-            # publish new door state message to NodeRed
-            client.publish("Door_Status", "OPEN")
-            Take_Picture()
-            log_stash("Door was opened ", "Exiting button press routine ")
-            return()
- 
-
+        log_stash("Door was closed ", "The door will be opened ")
+        GPIO.output(openPin1, 1)
+        time.sleep(open_door_time)
+        # turn off open pin
+        GPIO.output(openPin1, 0)
+        #update to new door state
+        door_state = 'OPEN'
+        with open('/temp/doorstate.txt', "w") as f:
+            f.write(door_state)
+            f.close
+        # publish new door state message to NodeRed
+        client.publish("Door_Status", "OPEN")
+        Take_Picture()
+        log_stash("Door was opened ", "Exiting button press routine ")
+        return()
 
 def vent_button_press_callback(self):
     print("vent change!")
 
 def on_connect(client, userdata, flags, rc):
     log_stash("MQTT Connected", "Connected with result code "+str(rc))
-    print("Connected with result code "+str(rc))
+    # print("Connected with result code "+str(rc))
     client.subscribe("Door_Actions")
 
 def on_message(client, userdata, msg):
@@ -349,7 +347,7 @@ while True:
         time.sleep(1)
 
     except KeyboardInterrupt:
-        log_stash("Keyboard INterrupt received", "Exiting the program.")
+        log_stash("Keyboard Interrupt received", "Exiting the program.")
         client.disconnect()
         client.loop_stop()
         GPIO.output(active_running_led, 0)
