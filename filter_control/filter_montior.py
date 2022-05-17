@@ -264,7 +264,7 @@ def publish_message(the_topic, the_message):
         client.publish(the_topic, the_message)
         log_stash("I published a message ", " it was: " + the_message + " ")
     except Exception:
-        traceback.print_exc()("I published a message ", " it was: " + the_message + " ")
+        log_stash("Error publishing MQTT message", "The error is:\n" (traceback.format_exc()))
 
     
 # Here is the actual program:
