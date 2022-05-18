@@ -247,7 +247,7 @@ def Collect_Temp_Data() :
             try :
                 temp_temp_temp = (temp_sensor.tempC(i))
             except IndexError :
-                log_stash("Themal probe failure! ", "Temp sensor " + i + " failed to read correctly. ")
+                log_stash("Themal probe failure! ", "Temp sensor " + str(i) + " failed to read correctly. ")
                 temp_temp_temp = 100
 
             the_tempC.append(temp_temp_temp)
