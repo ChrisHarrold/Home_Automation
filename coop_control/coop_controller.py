@@ -32,7 +32,7 @@ vent_state = ""
 # a single variable here to control the door motor runtime. That way once I get the
 # right timing, it is a single change instead of 6 or 8
 open_door_time = 7
-close_door_time = 5
+close_door_time = 6
 vent_time = 3
 
 #set all pins to startup modes:
