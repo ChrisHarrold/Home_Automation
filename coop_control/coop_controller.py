@@ -64,7 +64,8 @@ except FileNotFoundError:
         f.close
 
 # get last known local door and vent values:
-def get_door_state(door_state) :
+def get_door_state() :
+    global door_state
     log_stash("Checking door state file", "Reading current Door State")
     try :
         with open('/temp/doorstate.txt', "r") as f:
