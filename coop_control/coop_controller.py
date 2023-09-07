@@ -28,6 +28,7 @@ temp_sensor = DS18B20()
 first_run = True
 door_state = ""
 vent_state = ""
+
 # I realized the motor timming was in a bunch of places suddenly so I thought to put
 # a single variable here to control the door motor runtime. That way once I get the
 # right timing, it is a single change instead of 6 or 8
