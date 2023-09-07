@@ -64,7 +64,7 @@ except FileNotFoundError:
         f.close
 
 # get last known local door and vent values:
-def get_door_state() :
+def get_door_state(door_state) :
     log_stash("Checking door state file", "Reading current Door State")
     try :
         with open('/temp/doorstate.txt', "r") as f:
@@ -316,7 +316,7 @@ while True:
     try:
         if first_run :
             log_stash("Executing initial run", "First run of the application is in process")
-            get_door_state()
+            get_door_state(door_state)
             # print("First Run")
             # on the first run the program does the key checks immediately
             # helps with debugging on the Node Red side
