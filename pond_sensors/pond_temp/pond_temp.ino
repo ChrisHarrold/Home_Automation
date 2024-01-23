@@ -222,7 +222,7 @@ void setup_wifi() {
   
 }
 
-
+// update RTC memory values for persistance across deep sleep cycle
 void writeToRTCMemory() {
   if (rtcMem.count == MAXHOUR) {
     rtcMem.count = 1;
@@ -243,6 +243,7 @@ void writeToRTCMemory() {
   yield();
 }
 
+// read analog for battery level indicator
 void getBatteryLevel() {
   battery_raw = analogRead(batt_pin);
   Serial.print("battery raw reading:  ");
